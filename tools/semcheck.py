@@ -7,6 +7,7 @@ heads={}
 for n,f in files.items():
     heads[n]={m.group(1): m.group(2).strip()
               for m in re.finditer(r'^###\s+(\d+\.\d+)\s+(.*)$', open(f).read(), re.M)}
+if len(sys.argv)!=2: sys.exit("usage: python3 tools/semcheck.py <note.md>")
 target=sys.argv[1]
 seen=set()
 for ln,line in enumerate(open(target).read().split('\n'),1):

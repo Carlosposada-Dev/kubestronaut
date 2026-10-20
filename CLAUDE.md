@@ -56,5 +56,8 @@ disposable node w3 for install/reset/init sims. Snapshots `lab-v135` (default) a
   serves, using `note-templates.md`. Template A for KCNA/KCSA, Template B for
   CKA/CKAD/CKS theory, Template C for the per-domain runbooks (`cka-D1*.md` … `cka-D5.md`).
   Never write the same topic twice for two different exams.
-- Run `python3 tools/checkrefs.py` and `python3 tools/semcheck.py` before delivering a note.
+- Before delivering a note, from the repo root:
+  - `python3 tools/checkrefs.py` — every `note NN §X.Y` reference points to a section that exists.
+  - `python3 tools/semcheck.py <note.md>` — lists each reference in that note with the target
+    section's title, so I can check it points to the RIGHT topic, not just an existing one.
 - Edit files in place in this repo; commit after each session.
