@@ -245,17 +245,18 @@ coach proposes the day's review at the start of each session from this table and
 
 ## 7. Daily session — performance blocks
 
-### 7.1 Method: teach-first (`claude/session-protocol.md §3`, 16 Sep)
+### 7.1 Method: five stages (`claude/session-protocol.md §3`, r3 19 Oct)
 
-**Phase T** — big picture, then one step per message, every flag explained, one
-check question, wait for "entendido". **Phase C** — command card, ≤ 10 lines,
-written into the runbook. **Phase E** — run 1 with the card, run 2 without it and
-timed, break/fix blind.
+**1 Walkthrough** — the runbook section explained top to bottom. **2 Shape** — the
+concepts, no commands. **3 Whiteboard** — one step per message, every flag explained,
+command card written into the runbook. **No check questions in 1–3**; the learner
+says `sigue`. **4 Solo** — run 1 with the card, run 2 without it and timed, break/fix
+blind. **5 Exam mode** — short encoded set via `/exam`.
 
-**Speed rule (26 Sep, hardened 16 Oct):** phase T is for **new mechanisms only**.
+**Speed rule (26 Sep, hardened 16 Oct):** stages 1–3 are for **new mechanisms only**.
 A bullet whose mechanism is already in a recalled note (most of D2, D3, D4) starts at
-phase C — the coach shows the card, explains only what is unfamiliar, and moves to
-E. Re-verification of D1 items never gets phase T; a 🔴 gets phase C.
+the card — the coach explains only what is unfamiliar, and moves to stage 4.
+Re-verification of D1 items never gets stages 1–3; a 🔴 gets the card.
 
 | Run | Mode |
 |---|---|
@@ -281,14 +282,13 @@ states its machine** (§8.2). **Measure the keyboard clock, not the wall clock**
 `apt-get`, `kubeadm upgrade apply` and control-plane restarts carry 2–6 min of fixed
 machine time — in the exam, leave the task while it waits.
 
-### 7.3 Chats
+### 7.3 Sessions (Claude Code, from 19 Oct)
 
-One chat per **domain**, open for as long as that domain is active:
-`CKA D1 — Cluster Architecture` · `CKA D3 — Services & Networking` ·
+One Claude Code session per study block, opened in this repo and named after the
+domain: `CKA D1 — Cluster Architecture` · `CKA D3 — Services & Networking` ·
 `CKA D4 — Storage` · `CKA D2 — Workloads` · `CKA D5 — Troubleshooting` ·
-`CKA Simulator` (practice week). Opener: `claude/session-protocol.md §4`.
-Spaced reviews run inside whichever chat is active that day. The Sat 17 Oct
-assessment runs in the D1 chat.
+`CKA Simulator` (practice week). Opener: `/study` or `/exam`
+(`claude/session-protocol.md §4`). Continuity lives in the files, not the chat.
 
 ---
 
@@ -389,7 +389,8 @@ closes when done **twice in a row under target without looking**.
 ### 9.4 Language
 
 Every artefact in **English**. Questions may be in Spanish. Technical terms are
-never translated. Updated files are delivered **complete, never as patches**.
+never translated. Files are edited **in place in this repo** and committed at
+`cierre` (from 19 Oct; before that, delivered as attachments to the claude.ai Project).
 
 ---
 
