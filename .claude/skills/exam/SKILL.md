@@ -9,6 +9,9 @@ Exam-mode drill for: **$ARGUMENTS** (default 3 tasks).
 
 ## Prepare (before showing anything)
 
+0. Run `git pull --ff-only` (stop if it fails) and
+   `command -v multipass && multipass list`. No lab reachable from this machine →
+   stop: exam mode needs the cluster. Say which machine has it.
 1. Read `claude/session-protocol.md §3` (stage 5) and `plan.md §13` (exam environment).
 2. Read the domain index (`<exam>/<exam>-D<n>.md` §7) and every runbook of the domain.
 3. Read `claude/mistakes.md` rows for the domain.

@@ -20,17 +20,32 @@ any of those questions, and if this file disagrees with it, `plan.md` wins.
   every file, note and commit in English; never translate Kubernetes terms.** Correct
   my technical terminology; ignore my grammar.
 
+## Machine-agnostic repo
+
+I study from more than one machine (study PC, laptop with WSL). Nothing in this repo
+may depend on the machine it is cloned on: no absolute paths, no usernames, no
+host-specific config. Machine-local settings go in `.claude/settings.local.json`
+(gitignored). New machine setup: `README.md`.
+
+**Start of every session:** `git pull --ff-only`. If it fails, stop and tell me —
+never study on a stale copy. **End:** commit and push at `cierre`.
+
 ## Lab
 
-multipass/QEMU-KVM on this host. kubeadm cluster `cp1` + `w1` + `w2` (Calico via
-tigera-operator); disposable node `w3` for install/reset/init sims. Snapshots and
+multipass/QEMU-KVM on the **lab host** — the machine that runs the VMs, which is not
+necessarily the one Claude Code runs on. kubeadm cluster `cp1` + `w1` + `w2` (Calico
+via tigera-operator); disposable node `w3` for install/reset/init sims. Snapshots and
 versions: `plan.md §8`. Exam runs v1.35. **Never practise on EKS.**
 
-**Host isolation:** the host runs `multipass` and nothing else. Every command block
-starts with a machine banner — a block without one is a defect:
+At session start, check `command -v multipass && multipass list`. If the lab is not
+reachable from this machine, say so: stages 1–3 and theory still work (no terminal
+needed); stages 4–5 wait for a machine with the lab.
+
+**Host isolation:** the lab host runs `multipass` and nothing else. Every command
+block starts with a machine banner — a block without one is a defect:
 
 ```
-# ▶▶ HOST — cposada@cposada
+# ▶▶ HOST — the lab host (runs multipass only)
 # ▶▶ cp1  — ubuntu@cp1
 # ▶▶ w1   — ubuntu@w1   (from cp1: ssh w1)
 ```

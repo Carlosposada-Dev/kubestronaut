@@ -9,6 +9,9 @@ Study session for: **$ARGUMENTS**
 
 ## Before the first message
 
+0. Run `git pull --ff-only` (stop and tell me if it fails), then
+   `command -v multipass && multipass list` to know whether the lab is reachable
+   from this machine. No lab → stages 1–3 only; say so in the first message.
 1. Read `claude/session-protocol.md` — it is the method. Follow §3 exactly.
 2. Read `plan.md` §3–§6 and the last rows of §15 (where am I, what is owed).
 3. Read the domain index (`<exam>/<exam>-D<n>.md`: §7 drill table, §8 scoreboard)

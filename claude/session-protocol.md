@@ -16,6 +16,10 @@
 - **Continuity lives in the files, never in chat history.** A new session must be
   able to resume from `plan.md §15`, `claude/mistakes.md` and the runbook alone.
 - `D` is always the **domain number**, never the day.
+- **The repo is machine-agnostic** (study PC, laptop/WSL). Every session starts with
+  `git pull --ff-only` and ends with a push at `cierre`. One machine at a time.
+- **Lab check at start:** `command -v multipass && multipass list`. No lab on this
+  machine → stages 1–3 and theory only; stages 4–5 wait.
 
 ---
 
