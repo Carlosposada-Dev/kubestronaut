@@ -296,24 +296,31 @@ domain: `CKA D1 — Cluster Architecture` · `CKA D3 — Services & Networking` 
 
 | Item | Value |
 |---|---|
-| Cluster | multipass/QEMU-KVM · `cp1` `w1` `w2` · kubeadm **v1.35.9** (`lab-v135`) · Calico **v3.32.2** via tigera-operator + `Installation` CR |
-| Disposable node | **`w3`** `10.167.152.248` (snapshot **`cleanw3`**) — every install/reset/init (1.2, 1.3, 1.7 sims) runs there, never on cp1/w1/w2. **Last state (26 Sep): single-node Calico cluster (`172.20.0.0/16`)** — restore `cleanw3` before a 1.2 run |
-| Control-plane IP | `10.167.152.47` · w1 `.24` · w2 `.155` |
+| Lab host | **Laptop, WSL Ubuntu 24.04** (since 29 Oct) — multipass 1.17 on nested KVM; `.wslconfig` caps WSL at 6 threads / 16 GB. The desktop still holds the old `lab-v134`/`lab-v135` cluster (10.167.152.x) — legacy, not updated |
+| Cluster | multipass/QEMU-KVM · `cp1` (2 vCPU / 4 GB) `w1` `w2` (2 vCPU / 3 GB) · kubeadm **v1.37.1** (`lab-v137`) · Calico **v3.33.0** via tigera-operator + `Installation` CR |
+| Disposable node | **`w3`** `10.97.0.241` (2 vCPU / 3 GB, snapshot **`cleanw3`** = bare Ubuntu) — every install/reset/init (1.2, 1.3, 1.7 sims) runs there, never on cp1/w1/w2 |
+| Control-plane IP | `10.97.0.213` · w1 `10.97.0.209` · w2 `10.97.0.122` |
 | Pod / Service CIDR | `10.244.0.0/16` · `10.96.0.0/12` |
-| Exam version | **v1.35** |
+| Exam version | **v1.37** (LF page, checked 29 Oct — see §13) |
 
 ### 8.1 Snapshot inventory
 
 | Snapshot | Version | SSH cp1→workers | `k` + completion in `.bashrc` | Tools | Use |
 |---|---|---|---|---|---|
-| **`lab-v135`** | 1.35.9 | ✅ | ✅ 3 nodes | crictl + endpoint 3 nodes · etcdctl/etcdutl **3.6.6** + helm on cp1 | **Default — everything except upgrade** |
-| **`lab-v134`** | 1.34.11 | ✅ | ✅ 3 nodes | crictl + endpoint 3 nodes · etcdctl/etcdutl **3.6.5** on cp1 · no helm | **Upgrade runs only** · Set 1 in full |
+| **`lab-v137`** | 1.37.1 | ✅ | ✅ 3 nodes | crictl + yq 3 nodes · etcdctl/etcdutl **3.7.0** + helm 3.22.1 on cp1 | **Default — everything except upgrade** |
+| **`lab-v136`** | 1.36.5 | ✅ | ✅ 3 nodes | crictl + yq 3 nodes · etcdctl/etcdutl **3.6.8** + helm 3.22.1 on cp1 | **Upgrade runs only** (→ 1.37.x) |
 | `w3.cleanw3` | — | — | — | — | 1.2 / 1.3 |
 
-**Naming rule:** `lab-v<minor>` — the version says the purpose: **v134 = upgrade
-source, v135 = everything else** (the exam's minor). The drill line (`$do` +
-`.vimrc`) is **not** in either — it is typed per host, as in the exam (§13). Holds on
-kubeadm/kubelet/kubectl present in both.
+**Naming rule:** `lab-v<minor>` — the version says the purpose: **v136 = upgrade
+source, v137 = everything else** (the exam's minor). `lab-v137` was built by
+upgrading `lab-v136` with `kubeadm upgrade` (it is its child snapshot). The drill
+line (`$do` + `.vimrc`) is **not** in either — it is typed per host, as in the exam
+(§13). Holds on kubeadm/kubelet/kubectl present in both. Build scripts: `~/lab-build`
+on the laptop (`build-lab.sh`, `upgrade.sh`; not in this repo).
+
+**When the exam moves to the next minor** (LF aligns 4–8 weeks after each
+Kubernetes release), rebuild both bases one minor up: `BASE=<n-1>.x NEXT=<n>.y
+~/lab-build/build-lab.sh`.
 
 **Rules:** all three VMs, stopped, together — **for `snapshot`, `restore` and
 `delete` alike** (a running VM locks its disk: `Failed to get shared "write" lock`).
@@ -456,7 +463,17 @@ the task's infobox. Every SSH host ships **`kubectl` with the `k` alias and Bash
 completion already configured**, plus `yq`, `curl`/`wget` and man pages. The
 **base** system (hostname `base`) has **none** of these. You `ssh <host>`, work,
 and **`exit` back to base**. **Nested ssh is not supported.** `sudo -i` gives root
-on any host. The CKA environment runs **v1.35**.
+on any host. The CKA environment runs **v1.37** (*"The CKA environment is currently
+running Kubernetes v1.37"* — LF page, checked 29 Oct; it was v1.35 on 26 Sep).
+
+**Which upgrade the task asks for — inference, not official.** The LF does not
+publish it. Candidate reports say the upgrade task hands you a cluster **one minor
+below the exam** and asks for the exam's minor — today **1.36 → 1.37**. It is
+consistent with kubeadm's own rule (*"Skipping MINOR versions when upgrading is
+unsupported"*) and with the current upgrade page on kubernetes.io (1.36.x → 1.37.x).
+The mechanism is identical across minors (repo → kubeadm → `upgrade apply`/`node` →
+drain → kubelet + kubectl → uncordon); what changes are the **literals**: the minor in
+the `.list` URL, the apt versions and the etcd image. Drill it from `lab-v136`.
 
 **Rule: setup per host, not per exam.** Nothing survives an `exit`: your exports
 and `~/.vimrc` die with the session. So:
@@ -556,6 +573,7 @@ copy wins on conflict.**
 | 09-28 → 10-05 | CKA | _unknown_ | Possibly some D3 (3.1/3.3/3.6). To confirm at the assessment | — |
 | **10-06 → 10-16** | — | **0** | **~10 days with zero hours** — higher-priority paid obligations. CKA 18 Oct not sat. Mock A (10 Oct) and killer.sh A1/A2 (11/14 Oct) did not happen | — |
 | **10-16** | plan | — | **CKA rescheduled → Sat 7 Nov.** CKAD Sat 21 Nov, CKS Sun 29 Nov (free shot). **Expiration of CKA, CKAD, CKS confirmed 30 Nov** (open item since 1 Sep closed). Go/no-go rewritten: A2 ≥ 60% sit, < 60% move to 14 Nov. Practice week 31 Oct – 6 Nov conditional on Fri 30 Oct. **Plan v5.0** | — |
+| **10-29** | lab | — | **Exam now v1.37** (LF page). Lab moved to the laptop (WSL) and **rebuilt**: `lab-v136` (1.36.5, upgrade source) + `lab-v137` (1.37.1, default), Calico 3.33.0, yq added (exam ships it); 1.34 reached EOL 27 Oct. Old `lab-v134`/`lab-v135` retired. **Literal refresh owed** in `cka-D1-2-lifecycle.md` (drill still 1.34 → 1.35.8) | — |
 
 **Owed:** hours + confidence for 14–23 Sep and 27 Sep; the 18–23 Sep drill times for
 `cka-D1.md §7`; the 28 Sep – 5 Oct record (what, if anything, was done).

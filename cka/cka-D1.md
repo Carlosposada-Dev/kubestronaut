@@ -3,9 +3,9 @@ domain: D1 — Cluster Architecture, Installation & Configuration
 weight: 25%
 exams: [CKA]
 theory: notes_01, notes_02, notes_07, notes_10
-k8s_version: v1.35.8
-lab: 3× multipass VM (cp1, w1, w2) on Ubuntu 24.04 host · Calico v3.32.2 via tigera-operator
-revision: 2026-09-26 (r11 — §7 rows 9/10 reinstated as w3 sims, rows 13–14 added; §8 1.2/1.3/1.7 on R1; w3.cleanw3 in inventory) · r10 2026-09-26 (snapshot bases lab-v135 / lab-v134) · r9 2026-09-26 ( §0 rewritten from the LF page: per-host line replaces the boot block; lab bashrc mirrors the exam) · prev r7 2026-09-19 (§C/1.4c/1.5 closed) · prev r6 2026-09-17 ( Template C adopted for the content files; snapshot card; restore loop fixed) · prev r4 2026-09-16 · prev r3 2026-09-14 split into index + 3 content files
+k8s_version: v1.37.1 (lab-v137) · upgrade source v1.36.5 (lab-v136)
+lab: 3× multipass VM (cp1, w1, w2) in WSL Ubuntu 24.04 on the laptop · Calico v3.33.0 via tigera-operator
+revision: 2026-10-29 (r12 — lab rebuilt for the v1.37 exam: bases lab-v137 / lab-v136, yq on all nodes; §0.3 inventory and restore commands updated) · 2026-09-26 (r11 — §7 rows 9/10 reinstated as w3 sims, rows 13–14 added; §8 1.2/1.3/1.7 on R1; w3.cleanw3 in inventory) · r10 2026-09-26 (snapshot bases lab-v135 / lab-v134) · r9 2026-09-26 ( §0 rewritten from the LF page: per-host line replaces the boot block; lab bashrc mirrors the exam) · prev r7 2026-09-19 (§C/1.4c/1.5 closed) · prev r6 2026-09-17 ( Template C adopted for the content files; snapshot card; restore loop fixed) · prev r4 2026-09-16 · prev r3 2026-09-14 split into index + 3 content files
 ---
 
 # D1 — Cluster Architecture, Installation & Configuration (25%)
@@ -182,9 +182,9 @@ containing a `multipass` command has an invalid time.
 
 ```bash
 # ▶▶ HOST — RESTORE (all three, always together)
-# use lab-v134 for upgrade runs; lab-v135 for everything else
+# use lab-v136 for upgrade runs; lab-v137 for everything else
 multipass stop cp1 w1 w2
-for n in cp1 w1 w2; do multipass restore $n.lab-v135 --destructive; done
+for n in cp1 w1 w2; do multipass restore $n.lab-v137 --destructive; done
 multipass start cp1 w1 w2
 
 # ▶▶ HOST — SNAPSHOT
@@ -211,8 +211,8 @@ SKEW      x509 "expired or not yet valid" → compare `date` with the host → r
 
 | Snapshot | Version | `k` alias | Tools | Use |
 |---|---|---|---|---|
-| **`lab-v135`** | 1.35.9 | ✅ 3 nodes | crictl 3 nodes · etcd 3.6.6 + helm on cp1 | **default** — everything except upgrade |
-| **`lab-v134`** | 1.34.11 | ✅ 3 nodes | crictl 3 nodes · etcd 3.6.5 on cp1 | upgrade runs · Set 1 |
+| **`lab-v137`** | 1.37.1 | ✅ 3 nodes | crictl + yq 3 nodes · etcd 3.7.0 + helm on cp1 | **default** — everything except upgrade |
+| **`lab-v136`** | 1.36.5 | ✅ 3 nodes | crictl + yq 3 nodes · etcd 3.6.8 + helm on cp1 | upgrade runs (→ 1.37.x) · Set 1 |
 | `w3.cleanw3` | bare Ubuntu | — | — | 1.2 runs · the base for every w3 sim (`cka-D1-1-install.md §W3`) |
 
 A snapshot freezes everything installed **before** it; restoring an older one

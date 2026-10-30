@@ -35,7 +35,8 @@ never study on a stale copy. **End:** commit and push at `cierre`.
 multipass/QEMU-KVM on the **lab host** — the machine that runs the VMs, which is not
 necessarily the one Claude Code runs on. kubeadm cluster `cp1` + `w1` + `w2` (Calico
 via tigera-operator); disposable node `w3` for install/reset/init sims. Snapshots and
-versions: `plan.md §8`. Exam runs v1.35. **Never practise on EKS.**
+versions: `plan.md §8`. Exam runs v1.37 (upgrade source in the lab: 1.36). **Never
+practise on EKS.**
 
 At session start, check `command -v multipass && multipass list`. If the lab is not
 reachable from this machine, say so: stages 1–3 and theory still work (no terminal
@@ -63,6 +64,26 @@ The five stages, in order — never skip, never merge:
    verification and its expected output, the machine, the EKS delta.
 4. **Solo** — I memorise shape + whiteboard + card, then run it alone, timed.
 5. **Exam mode** — a short set in exam wording, encoded setup, grader after the clock.
+
+### Shape format (stage 2) — adopted 29 Oct
+
+The format that made 1.2 click after a month away. Use it for every shape:
+
+1. **The idea in one sentence** — what the bullet achieves and, if useful, what it
+   does *not* cover yet (and which bullet does).
+2. **One analogy** that carries through all the steps (1.2: preparing a kitchen
+   before the chef — the kubelet — arrives).
+3. **The steps, in order**, each with the same three labels:
+   **Qué hace** (plain words) · **Por qué** (the failure it prevents) ·
+   **Cuidado** (the trap: two halves, ordering, a literal). Mark each 🎯/🔍/📚.
+4. **Cómo se conecta** — a table mapping each step to the symptom you see when it
+   is missing, so a fault can be classified before the cause is hunted.
+5. **Qué es qué** — a 🎯 / 🔍 / 📚 table: what you type in the exam, what you check,
+   what is only for understanding.
+6. **A mnemonic for the order** (initials + an absurd sentence), plus *why* the
+   order matters (which step depends on which).
+
+Still no commands in stage 2, and still no check question at the end.
 
 ### Questions — the rule I care most about
 

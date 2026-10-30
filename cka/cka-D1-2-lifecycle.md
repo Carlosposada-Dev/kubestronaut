@@ -11,6 +11,13 @@ revision: 2026-09-26 (r9 — held-package flag REMOVES the hold (measured); one 
 
 # D1 · Group 2 — Lifecycle (bullets 1.4, 1.5)
 
+> ⚠️ **29 Oct — literals out of date.** The exam now runs **v1.37** and the lab was
+> rebuilt: the upgrade source is **`lab-v136` (1.36.5)**, the target **1.37.x**,
+> etcd **3.6.8** on 1.36 and **3.7.0** on 1.37. The upgrade blocks below still say
+> 1.34 → 1.35.8 and etcd 3.6.5/3.6.6. The mechanism is unchanged; translate the
+> minor in the `.list` URL, the apt/kubeadm versions and the etcd release until the
+> literal refresh is done (owed — `plan.md §15`, 29 Oct).
+
 > Index, boot block, execution locations, scaffolding and scoreboard:
 > **`cka-D1.md`**.
 >
