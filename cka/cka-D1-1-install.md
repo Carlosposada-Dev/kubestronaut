@@ -6,7 +6,7 @@ exams: [CKA]
 index: cka-D1.md
 theory: notes_01, notes_04, notes_05, notes_06
 status: draft
-revision: 2026-09-26 (r5 — 1.3 CNI task + Pod CIDR ×3; 1.7 crictl method + .deb CRI; §9 sims A/B/C; stale CNI config; cleanw3) · r4 2026-09-26 (modules step CNI-dependent; bridge sysctls conditional) · r2 2026-09-23 (Template C) · r1 2026-09-14
+revision: 2026-10-30 (r6 — 1.2 card: tee pattern, vim :s, version pin + --allow-downgrades, lsmod lab-only; cgroup paragraph from v1.37 docs; 3 traps) · r5 2026-09-26 ( 1.3 CNI task + Pod CIDR ×3; 1.7 crictl method + .deb CRI; §9 sims A/B/C; stale CNI config; cleanw3) · r4 2026-09-26 (modules step CNI-dependent; bridge sysctls conditional) · r2 2026-09-23 (Template C) · r1 2026-09-14
 ---
 
 # D1 · Group 1 — Install & Extend (bullets 1.2, 1.3, 1.7)
@@ -158,7 +158,7 @@ sudo systemctl restart containerd
 swapon --show                                               # nothing
 sysctl net.ipv4.ip_forward net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables   # all 1
 cat /etc/sysctl.d/k8s.conf                                  # the FILE is right, not only the live value
-lsmod | grep br_netfilter                                   # present
+lsmod | grep -E 'overlay|br_netfilter'                      # 🧪 lab only: the bridge keys reading 1 above already prove br_netfilter; modprobe is silent on success
 grep SystemdCgroup /etc/containerd/config.toml              # true
 systemctl is-active containerd                              # active
 apt-cache madison kubeadm | head -1                         # repo reachable, right minor
@@ -177,12 +177,16 @@ those, persistently in `/etc/sysctl.d/`. If it only says "prepare the node":
 and dies → cgroups. Pod lives but can't talk → `ip_forward` / `br_netfilter`. A
 network fault never kills a container.
 
-**cgroup mismatch on containerd 2.x — pending measurement.** The classic symptom
-(Pods start, then die) belongs to containerd 1.x. With containerd 2.x the kubelet
-can ask the runtime which driver it uses (`KubeletCgroupDriverFromCRI`) and follow
-it, so `SystemdCgroup = false` may give two cgroupfs users that "work" and become
-unstable under resource pressure. Break/fix after a join, then rewrite this
-paragraph with the result:
+**cgroup driver on v1.37 + containerd 2.x — resolved from the docs 30 Oct.**
+`SystemdCgroup = true` tells containerd (through `runc`) to **delegate** cgroup
+management to systemd. *Container Runtimes* (v1.37): with `KubeletCgroupDriverFromCRI`
+and a runtime that supports the `RuntimeConfig` CRI RPC (containerd 2.x does), the
+kubelet **detects the driver from the runtime and ignores its own `cgroupDriver`**.
+So `SystemdCgroup = false` raises no error: kubelet and containerd both use
+`cgroupfs`, next to systemd managing the same tree — two managers, unstable under
+resource pressure, invisible until then. The classic "Pods start, then die" symptom
+belongs to containerd 1.x, whose fallback to the kubelet flag is dropped in v1.38.
+Still worth a break/fix after a join, to see what the logs show:
 
 ```bash
 # ▶▶ w3 — after join
@@ -197,14 +201,14 @@ Measured 23 Sep: Ubuntu 24.04's own `containerd` package is **2.2.1** (with `run
 ### Command card — 1.2
 ```
 look     swapon --show ; grep swap /etc/fstab  → empty = skip, else swapoff -a + vim fstab
-modules  heredoc → /etc/modules-load.d/k8s.conf (overlay, br_netfilter) → modprobe both
-sysctl   [DOC] ip_forward heredoc (+ bridge keys only if asked) → /etc/sysctl.d/k8s.conf → sysctl --system
-install  apt-get install -y containerd
-config   containerd config default | sudo tee /etc/containerd/config.toml
-edit     vim +/SystemdCgroup → true → systemctl restart containerd
-repo     [DOC] Installing kubeadm steps 1–3 (minor in .list = cluster minor)
-install  apt-get install -y kubelet kubeadm kubectl → apt-mark hold
-verify   swapon · sysctl ×3 + cat file · lsmod · grep SystemdCgroup · madison · showhold
+modules  [MEM] heredoc | sudo tee /etc/modules-load.d/k8s.conf (overlay, br_netfilter) → modprobe both
+sysctl   [DOC] ip_forward heredoc | sudo tee /etc/sysctl.d/k8s.conf (+ bridge keys only if asked) → sysctl --system
+runtime  [MEM] apt-get install -y containerd → mkdir -p /etc/containerd
+config   containerd config default | sudo tee /etc/containerd/config.toml >/dev/null
+edit     vim +/SystemdCgroup → :s/false/true → :wq → systemctl restart containerd
+repo     [DOC] Installing kubeadm steps 1–3 — minor in .list = cluster minor (kubeadm version -o short)
+install  apt-get install -y kubelet kubeadm kubectl (pin =X.Y.Z-1.1; older than installed → --allow-downgrades) → apt-mark hold
+verify   swapon · sysctl ×3 + cat file · grep SystemdCgroup · is-active · madison · showhold
 ```
 
 ### Traps
@@ -222,6 +226,9 @@ verify   swapon · sysctl ×3 + cat file · lsmod · grep SystemdCgroup · madis
 | `> config.toml: Permission denied` | Redirection runs as you, not root → `\| sudo tee` |
 | kubelet `activating (auto-restart)` | Normal until `init`/`join` writes its config |
 | Same failing command run 3× | It fails identically. Look (`cat`, `grep`, the error) or change something first |
+| `grep 'overlay\|br_netfilter'` empty although both are loaded | Basic grep reads `\|` literally — alternation needs `grep -E` |
+| Pinned `=1.37.1-1.1`, version stays 1.37.2 | Older than installed = a downgrade: `E: Packages were downgraded and -y was used without --allow-downgrades`. Add `--allow-downgrades` (held → `unhold` first, or `--allow-change-held-packages`), then `hold` again |
+| "It didn't work", then `clear` | The answer was the `E:` line. Read it before clearing; if it is gone, re-run and read it |
 
 ⚠️ **EKS:** none of this exists. AMI + bootstrap script + kubelet config are AWS's;
 the kubelet version is tied to the AMI — no repo, no `hold`, upgrade = new AMI or
@@ -365,10 +372,11 @@ Only a recreate (`rollout restart`, delete a Pod) lets the scheduler decide agai
 ```
 cidr     kubectl -n kube-system get pod -l component=kube-controller-manager -o yaml | grep cluster-cidr
 operator kubectl create -f <URL from task>
-cr       curl -sLO <same dir>/custom-resources.yaml → vim cidr → grep → kubectl create -f
-prove    get tigerastatus · get nodes Ready · coredns Running
-token    kubeadm token create --print-join-command            [cp1]
-join     sudo kubeadm join …                                   [node]
+cr       curl -sLO <same dir>/custom-resources.yaml → grep cidr → vim +/cidr :s → grep cidr → kubectl create -f
+prove    get tigerastatus (calico True) · get nodes Ready · coredns Running   (2–4 min; webhook "connection refused" meanwhile = wait)
+token    sudo kubeadm token create --print-join-command       [cp1]
+join     sudo kubeadm join …  (paste, Ctrl+Shift+V)            [node]
+verify   get nodes -o wide: Ready + VERSION = cp1 · calico-node 1/1 on the node
 off      drain --ignore-daemonsets --delete-emptydir-data → delete node   [cp1]
 clean    sudo kubeadm reset -f && sudo rm -rf /etc/cni/net.d ~/.kube      [node]
 ```
@@ -379,7 +387,10 @@ clean    sudo kubeadm reset -f && sudo rm -rf /etc/cni/net.d ~/.kube      [node]
 |---|---|
 | Installed Flannel, nodes Ready, task scored 0 | The task required NetworkPolicy enforcement — Calico |
 | `annotations: Too long` on the operator | `apply` instead of `create` |
-| `no matches for kind "Installation"` | CRDs ship in `operator-crds.yaml` for this version |
+| `no matches for kind "Installation"` | v3.33: the operator installs its own CRDs (`-manage-crds=true`) seconds after starting — wait 20 s, re-run. Still failing after a minute (or an older version) → `operator-crds.yaml`, same directory, create it first |
+| `tigerastatus` full of `failed calling webhook … connection refused` | Normal for the first minutes — the webhook Pods need the network `calico-node` is still building. A fault only once `calico-node` is 1/1 |
+| Node `Ready`, `calico-node` still 0/1 (31 Oct, ~10 min) | `Ready` flips when `10-calico.conflist` lands, not when Calico works — prove with `tigerastatus` |
+| `kubeadm token create` → `admin.conf: permission denied` | Missing `sudo` — kubeadm reads the root-owned `/etc/kubernetes/admin.conf` |
 | Calico pool set to a `/24` | Took `describe node`'s `PodCIDR` (node slice) instead of `--cluster-cidr` |
 | `grep -n cdir` empty → edited blind | A typo'd check proves nothing — re-run it right |
 | `sed` put the runbook's CIDR, not the cluster's | Copied a value instead of reading one — `cat`/`grep` after every edit |
@@ -574,7 +585,7 @@ sudo kubeadm reset -f
 sudo rm -rf /etc/cni/net.d ~/.kube ~/custom-resources.yaml ~/kubeadm-init.log
 sudo reboot                                     # clears vxlan.calico + Calico's iptables
 # after reboot — pick a CIDR you will "forget"
-sudo kubeadm init --pod-network-cidr=172.20.0.0/16 --apiserver-advertise-address=10.167.152.248 --node-name=w3 > /dev/null
+sudo kubeadm init --pod-network-cidr=172.20.0.0/16 --apiserver-advertise-address=10.97.0.241 --node-name=w3 > /dev/null
 mkdir -p ~/.kube && sudo cp /etc/kubernetes/admin.conf ~/.kube/config && sudo chown $(id -u):$(id -g) ~/.kube/config
 kubectl get nodes && clear                      # NotReady → ⏱ start
 ```
@@ -588,7 +599,7 @@ configure a Container Network Interface that meets these requirements:
 
 Choose one of:
   Flannel v0.26.1  https://github.com/flannel-io/flannel/releases/download/v0.26.1/kube-flannel.yml
-  Calico  v3.32.2  https://raw.githubusercontent.com/projectcalico/calico/v3.32.2/manifests/tigera-operator.yaml
+  Calico  v3.33.0  https://raw.githubusercontent.com/projectcalico/calico/v3.33.0/manifests/tigera-operator.yaml
 ```
 
 ### Sim C · CRI from a `.deb` (weight 5%) · shape only

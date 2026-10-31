@@ -68,10 +68,14 @@ days with zero hours.
 | Exam | Study window | Exam | STATUS |
 |---|---|---|---|
 | KCNA | — | 11 Sep | ✅ **88%** |
-| **CKA** | Sat 17 Oct – Fri 6 Nov (21 days: 7 W + 14 d) | **Sat 7 Nov** (rescheduled 16 Oct) | ◐ active |
+| **CKA** | Sat 17 Oct – Mon 9 Nov | **Tue 10 Nov** (moved 27 Oct; plan B Sun 15 Nov) · killer.sh A1 Thu 5 Nov | ◐ active |
 | CKAD | Sun 8 Nov – Fri 20 Nov (13 days) | **Sat 21 Nov** | ☐ **book now** (free to move) |
 | CKS | Sun 22 Nov – Sat 28 Nov (7 days) | **Sun 29 Nov** | ☐ **book now**; cancel Sun 22 Nov if the chain broke |
 | Buffer | Sun 22 – Mon 30 Nov | — | absorbs exactly **one** failure (§5) |
+
+> **31 Oct:** CKA date is now Tue 10 Nov (learner's call, 27 Oct). §3 scenarios, §5
+> and §6.2 below still assume Sat 7 Nov — **re-cut owed**. Goal unchanged: CKA + CKAD
+> before 30 Nov, CKS as a free shot.
 
 **Why these dates.** Saturday exams: the result (24 h) lands on Sunday, the next
 decision is made before Monday. CKAD reuses ~60% of CKA and is a speed exam →
@@ -574,6 +578,7 @@ copy wins on conflict.**
 | **10-06 → 10-16** | — | **0** | **~10 days with zero hours** — higher-priority paid obligations. CKA 18 Oct not sat. Mock A (10 Oct) and killer.sh A1/A2 (11/14 Oct) did not happen | — |
 | **10-16** | plan | — | **CKA rescheduled → Sat 7 Nov.** CKAD Sat 21 Nov, CKS Sun 29 Nov (free shot). **Expiration of CKA, CKAD, CKS confirmed 30 Nov** (open item since 1 Sep closed). Go/no-go rewritten: A2 ≥ 60% sit, < 60% move to 14 Nov. Practice week 31 Oct – 6 Nov conditional on Fri 30 Oct. **Plan v5.0** | — |
 | **10-29** | lab | — | **Exam now v1.37** (LF page). Lab moved to the laptop (WSL) and **rebuilt**: `lab-v136` (1.36.5, upgrade source) + `lab-v137` (1.37.1, default), Calico 3.33.0, yq added (exam ships it); 1.34 reached EOL 27 Oct. Old `lab-v134`/`lab-v135` retired. **Literal refresh owed** in `cka-D1-2-lifecycle.md` (drill still 1.34 → 1.35.8) | — |
+| **10-31** | CKA | _at cierre_ | **D1-1 session on `w3` (in progress).** Stage-2 shape format adopted (`CLAUDE.md`). **1.2:** run 1 with card · **run 2 no card 9:11** (target 10:00, bare `w3`, 1.37.2 held) · **blind break/fix 3:59** (target 4:00; `br_netfilter` line removed + reboot) · recall 1/3 (rows 96–98). Runbook r6: tee pattern, pin + `--allow-downgrades`, cgroup driver from v1.37 docs. **1.3:** stages 1–3 redone on v1.37 + Calico 3.33 — `init` w3, Calico on `172.20.0.0/16`, reset, join to cp1 (aligned to 1.37.1), decommission. Measured: v3.33 operator installs its own CRDs; node `Ready` ~10 min before `calico-node` 1/1; webhook `connection refused` is transient. Card + traps updated. Stage 4 pending. **Lab rebuild running** in a separate session (latest patches, tool parity, new `w3` snapshot `prep137`) | _at cierre_ |
 
 **Owed:** hours + confidence for 14–23 Sep and 27 Sep; the 18–23 Sep drill times for
 `cka-D1.md §7`; the 28 Sep – 5 Oct record (what, if anything, was done).

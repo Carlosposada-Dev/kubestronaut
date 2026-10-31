@@ -341,11 +341,11 @@ Re-run until **Actual ≤ Target twice in a row, without looking.**
 | 6 | Node: drain → delete → re-join with a new token | -2 | cp1 + ssh | 5:00 | **~3:56** (26 Sep, w3: < 3:00 off + 0:56 join) | ☐ | | |
 | 7 | Role + RoleBinding for an SA + `auth can-i` proof | -3 | cp1 | 4:00 | | | | |
 | 8 | Install one component with Helm, one with Kustomize | -3 | cp1 | 6:00 | | | | |
-| 9 | Node prep from memory on a fresh VM (§9 Task 1) | -1 | w3 | 10:00 | **9:33** (26 Sep, verify consulted) | ☐ R1 Thu 1 Oct | | reinstated 23 Sep |
+| 9 | Node prep from memory on a fresh VM (§9 Task 1) | -1 | w3 | 10:00 | **9:33** (26 Sep, verify consulted) | **9:11** (31 Oct, no card, bare w3) | | reinstated 23 Sep · blind break/fix 3:59 (target 4:00, 31 Oct) · **R1 Mon 2 Nov closes it** |
 | 10 | ~~`kubeadm init` a fresh node~~ | -1 | w3 | — | — | — | — | `init` stays 📚 for the exam — now 🧪 setup for row 13 |
 | 11 | Exam mode Set 1 (lifecycle), 3 tasks | -2 | cp1 + ssh | 20:00 | | | | |
 | 12 | Exam mode Set 2 (install/access), 3 tasks | -1/-3 | cp1 + w3 | 20:00 | | | | |
-| 13 | **CNI install** on a no-CNI cluster (§9 sim B) | -1 | w3 | 6:00 | **3:24** (26 Sep, blind) | ☐ R1 Wed 30 | | the task reported since Feb 2025 |
+| 13 | **CNI install** on a no-CNI cluster (§9 sim B) | -1 | w3 | 6:00 | **3:24** (26 Sep, blind) | ☐ stage 4 (31 Oct) | | the task reported since Feb 2025 · 31 Oct: whiteboard redone on v1.37 + Calico 3.33 (untimed) |
 | 14 | **API server down**, diagnosed blind (§9 sim A) | -1 | w3 | 6:00 | untimed, method coached (26 Sep) | ☐ R1 Sat 3 Oct, new break | | folds into D5 5.2 |
 
 ## §8. Objectives scoreboard — D1
@@ -355,8 +355,8 @@ A bullet closes when performed **twice in a row under target, without looking**.
 | Bullet | File | Status |
 |---|---|---|
 | 1.1 RBAC | -3 | ☐ |
-| 1.2 Infrastructure | -1 | ◐ A1 9:33 (26 Sep, verify consulted) — **R1 Thu 1 Oct closes it** |
-| 1.3 kubeadm create/manage | -1 | ◐ join 0:56 · decommission < 3:00 · **CNI sim 3:24 blind** (26 Sep) — **R1 Wed 30 (CNI) closes it** |
+| 1.2 Infrastructure | -1 | ◐ A1 9:33 (26 Sep, verify consulted) · A2 9:11 no card + break/fix 3:59 (31 Oct) — **R1 Mon 2 Nov closes it** |
+| 1.3 kubeadm create/manage | -1 | ◐ join 0:56 · decommission < 3:00 · **CNI sim 3:24 blind** (26 Sep) · stages 1–3 redone on v1.37 (31 Oct) — **stage 4 timed runs close it** |
 | 1.4 Lifecycle / upgrade | -2 | ◐ upgrade A3 24:00 (keyboard clock never isolated); **1.4b executed and proven 17 Sep, A2 pending** |
 | 1.5 HA control plane | -2 | ✅ read 19 Sep — quorum, topologies, CP-join, multi-member restore recorded |
 | 1.6 Helm & Kustomize | -3 | ☐ |

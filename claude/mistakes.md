@@ -334,6 +334,27 @@ place. **Wrong, measured by the learner:** `apt-mark showhold` was empty on all
 three nodes after the run. Runbook r9 re-holds once per node, chained into the
 kubelet line.
 
+### Rows 93–102 — 31 Oct, D1-1 1.2 node prep + 1.3 whiteboard
+
+| # | Source | Error | Correction | Root cause | Note | Fixed |
+|---|---|---|---|---|---|---|
+| 93 | D1-1 1.2 | Pinned install `=1.37.1-1.1` over 1.37.2 → `E: Packages were downgraded and -y was used without --allow-downgrades` | Installing an older version than the one present needs `--allow-downgrades` (held packages: `unhold` first) | `GAP` | D1-1 1.2 | ☐ |
+| 94 | D1-1 1.2 | "It didn't work" → `clear` → the `E:` line was gone | Read the `E:` line before anything else; it names the fix | `READ` | D1-1 1.2 | ☐ |
+| 95 | D1-1 1.2 | `lsmod \| grep 'overlay\|br_netfilter'` without `-E` → empty | Alternation needs `grep -E` | `LIT` | D1-1 1.2 | ☐ |
+| 96 | D1-1 1.2 | Recall: `sysctl --system` named as the persistent half; path `/etc/systcl/` | Persistent = the file `/etc/sysctl.d/k8s.conf`; `sysctl --system` = apply now | `CONF` | D1-1 1.2 | ☐ |
+| 97 | D1-1 1.2 | Recall: kubelet crash-loop on a prepared node blamed on the missing CNI | The kubelet loops because it has no config until `init`/`join` writes `/var/lib/kubelet/config.yaml`. No CNI = `NotReady`, not a loop | `CONF` | D1-1 1.2 | ☐ |
+| 98 | D1-1 1.2 | Recall: "kubeadm may be up to 3 minors below" | kubelet ≤ apiserver, up to 3 minors older · kubeadm = the cluster version · kubectl ±1 | `CONF` | D1-1 1.2 | ☐ |
+| 99 | D1-1 1.2 | `apt-mark hold` left out of two spoken summaries of the install step | `install` and `hold` are one card line | `PREC` | D1-1 1.2 | ☐ |
+| 100 | D1-1 1.2 | "`SystemdCgroup = true` means containerd manages the cgroups" | The reverse: `true` = containerd delegates cgroup management to **systemd**, the same manager the kubelet uses | `CONF` | D1-1 1.2 | ☐ |
+| 101 | D1-1 1.2 | Break/fix solved (3:59 ✅) by walking every prep step, cause not classified | Classify first: network wording → steps 2–3 → `sysctl` ×3 → `cannot stat /proc/sys/net/bridge/…` = module missing → `modules-load.d` file | `SPEED` | D1-1 1.2 | ☐ |
+| 102 | D1-1 1.3 | "The worker was prepared with `kubeadm init`" | The worker is prepared by 1.2 (node prep); `init` builds a control plane — on `w3` it was undone with `reset` before the join | `CONF` | D1-1 1.3 | ☐ |
+
+**Coach errors, 31 Oct:**
+- The runbook's trap said `no matches for kind "Installation"` means the CRDs ship in `operator-crds.yaml`. In Calico v3.33 the operator installs its own CRDs (`-manage-crds=true`); the error right after creating the operator is timing. Fixed in the traps table.
+- Card 1.3 had `kubeadm token create` without `sudo`. Fixed.
+- I quoted `kubeadm reset`'s three-line warning from older versions; v1.37 prints one paragraph with the same three items.
+- The 1.2 break/fix wording named the category ("network requirements"). The exam gives a symptom or a literal list. From now on, exam-mode sets use that wording.
+
 ### Practice scores — Block 2
 
 | Date | Paper | Score | Time used | Weakest domain |
