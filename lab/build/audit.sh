@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Tool and node-state audit, run INSIDE a node. One "key value" line per check; MISSING when absent.
+have() { command -v "$1" >/dev/null 2>&1; }
+row()  { printf '%s %s\n' "$1" "${2:-MISSING}"; }
+ver()  { have "$1" && "$@" 2>/dev/null | grep -oE '[0-9]+\.[0-9]+(\.[0-9]+)?' | head -1; }
+
+row kubeadm   "$(have kubeadm && kubeadm version -o short)"
+row kubelet   "$(have kubelet && kubelet --version | awk '{print $2}')"
+row kubectl   "$(have kubectl && kubectl version --client 2>/dev/null | awk '/Client/{print $3}')"
+row alias_k   "$(bash -ic 'alias k' 2>/dev/null | grep -q "kubectl'" && echo yes)"
+row compl_k   "$(bash -ic 'complete -p k' 2>/dev/null | grep -q __start_kubectl && echo yes)"
+row crictl    "$(ver crictl --version)"
+row crictl.yaml "$(grep -q 'unix:///run/containerd/containerd.sock' /etc/crictl.yaml 2>/dev/null && echo containerd.sock)"
+row containerd "$(ver containerd --version)"
+row SystemdCgroup "$(grep -q 'SystemdCgroup = true' /etc/containerd/config.toml 2>/dev/null && echo true)"
+row yq        "$(ver yq --version)"
+row jq        "$(ver jq --version)"
+row vim       "$(ver vim --version)"
+row tmux      "$(ver tmux -V)"
+row curl      "$(ver curl --version)"
+row wget      "$(ver wget --version)"
+row man       "$(have man && man -w ls >/dev/null 2>&1 && echo pages)"
+row bash-completion "$(dpkg-query -W -f='${Version}' bash-completion 2>/dev/null | cut -d- -f1 | sed "s/^[0-9]*://")"
+row openssl   "$(ver openssl version)"
+row etcdctl   "$(ver etcdctl version)"
+row etcdutl   "$(ver etcdutl version)"
+row helm      "$(have helm && helm version --short | cut -d+ -f1)"
+row held      "$(apt-mark showhold | tr '\n' ',' | sed 's/,$//')"
+row swap      "$( [ -z "$(swapon --show)" ] && ! grep -qE '^[^#].*\sswap\s' /etc/fstab && echo off)"
+row modules   "$(grep -qx overlay /etc/modules-load.d/k8s.conf 2>/dev/null && grep -qx br_netfilter /etc/modules-load.d/k8s.conf && echo persistent)"
+row ip_forward "$( [ "$(sysctl -n net.ipv4.ip_forward)" = 1 ] && grep -q ip_forward /etc/sysctl.d/k8s.conf 2>/dev/null && echo persistent)"
+row lab_hosts "$(grep -q '# ---- CKA lab hosts ----' /etc/cloud/templates/hosts.debian.tmpl 2>/dev/null && awk '$1!~/^127\./ && $2~/^(cp1|w1|w2|w3)$/{printf "%s=%s,", $2, $1}' /etc/hosts | sed 's/,$//')"
+row joined    "$( [ -f /etc/kubernetes/kubelet.conf ] && echo yes || echo no)"
+row cni_conf  "$(sudo ls /etc/cni/net.d 2>/dev/null | tr '\n' ',' | sed 's/,$//')"
+row history   "$( [ -e ~/.bash_history ] || sudo test -e /root/.bash_history && echo PRESENT || echo none)"
