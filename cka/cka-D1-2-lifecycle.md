@@ -6,17 +6,10 @@ exams: [CKA]
 index: cka-D1.md
 theory: notes_01
 status: drilled (1.4 partial · 1.4b ✅ 17 Sep · §C ✅ 1.4c ✅ 19 Sep · 1.5 read)
-revision: 2026-09-26 (r9 — held-package flag REMOVES the hold (measured); one chained re-hold per node) · r8 2026-09-26 ( one drain line; verify v<x.y.z>; targets unified with cka-D1 §7; exam flow without nested ssh) · r7 2026-09-26 ( `apt` not `apt-get`; one parking directory /etc/kubernetes/; worker order per docs + overlap during apply; held-package flag; clean-v134 as upgrade base) · prev r6 2026-09-19
+revision: 2026-11-01 (r10 — literals refreshed for the v1.37 exam: upgrade 1.36 → 1.37, etcd 3.6.8 / 3.7.0, `lab-v136` as upgrade base) · 2026-09-26 (r9 — held-package flag REMOVES the hold (measured); one chained re-hold per node) · r8 2026-09-26 ( one drain line; verify v<x.y.z>; targets unified with cka-D1 §7; exam flow without nested ssh) · r7 2026-09-26 ( `apt` not `apt-get`; one parking directory /etc/kubernetes/; worker order per docs + overlap during apply; held-package flag; clean-v134 as upgrade base) · prev r6 2026-09-19
 ---
 
 # D1 · Group 2 — Lifecycle (bullets 1.4, 1.5)
-
-> ⚠️ **29 Oct — literals out of date.** The exam now runs **v1.37** and the lab was
-> rebuilt: the upgrade source is **`lab-v136` (1.36.5)**, the target **1.37.x**,
-> etcd **3.6.8** on 1.36 and **3.7.0** on 1.37. The upgrade blocks below still say
-> 1.34 → 1.35.8 and etcd 3.6.5/3.6.6. The mechanism is unchanged; translate the
-> minor in the `.list` URL, the apt/kubeadm versions and the etcd release until the
-> literal refresh is done (owed — `plan.md §15`, 29 Oct).
 
 > Index, boot block, execution locations, scaffolding and scoreboard:
 > **`cka-D1.md`**.
@@ -50,7 +43,7 @@ a file name, a version, a node — is literal. 🎯 blocks show defaults, not or
 | Convention | Why |
 |---|---|
 | **`apt`, not `apt-get`** | Identical for interactive use; 4 characters fewer on every call, and the upgrade calls it ~10 times. The docs write `apt-get` — do not let that throw you. `apt` warns "no stable CLI interface" only when **piped**; harmless. `apt-mark` and `apt-cache madison` have no short form — they stay |
-| **Always pin the version** (`kubeadm=1.35.9-1.1`) | Without one, apt installs the **newest** package in the repo. That is only correct when the task says "latest"; a task that names `v1.35.8` fails if you land on `.9` |
+| **Always pin the version** (`kubeadm=1.37.2-1.1`) | Without one, apt installs the **newest** package in the repo. That is only correct when the task says "latest"; a task that names `v1.37.1` fails if you land on `.9` |
 | **One parking directory: `/etc/kubernetes/`** | To stop the control plane, move the manifests **one level up**. No `mkdir`, no invented name, and the kubelet watches only `manifests/` itself. Nothing else in `/etc/kubernetes/` ends in `.yaml` |
 | **Chain with `&&`** | Stops at the first failure; `;` marches on and hides it. Same speed |
 | **One `drain` line for every node** | `kubectl drain <node> --ignore-daemonsets --delete-emptydir-data`. The second flag is harmless where there is no `emptyDir`, and fatal to forget where there is one — one variant to memorise, zero to choose |
@@ -155,7 +148,7 @@ There is no node you can reach that runs a control-plane component.
 
 | # | What we do | Why |
 |---|---|---|
-| 1 | Point apt at the new minor | A v1.34 repo can never see a v1.35 package |
+| 1 | Point apt at the new minor | A v1.36 repo can never see a v1.37 package |
 | 2 | Upgrade the **kubeadm binary** | It is the tool that performs the upgrade; it is not disruptive |
 | 3 | `upgrade apply` on cp1 | Static Pods + certificates + CoreDNS + kube-proxy + the ConfigMaps |
 | 4 | `drain` the node | The only disruptive step is next |
@@ -208,16 +201,16 @@ node otherwise, and each retype is a chance for `kubeadnm=`. It does not survive
 
 ```bash
 # ▶▶ cp1
-v=1.35.9-1.1                                    # apt format: NO v, WITH -1.1 — from the task
+v=1.37.2-1.1                                    # apt format: NO v, WITH -1.1 — from the task
 
-# BEAT 1 — the repo URL carries the minor. A v1.34 repo can never see v1.35.
-sudo sed -i 's|v1.34|v1.35|' /etc/apt/sources.list.d/kubernetes.list
+# BEAT 1 — the repo URL carries the minor. A v1.36 repo can never see v1.37.
+sudo sed -i 's|v1.36|v1.37|' /etc/apt/sources.list.d/kubernetes.list
 sudo apt update                                 # refreshes the INDEX. Upgrades nothing.
 #   📚 sudo apt-cache madison kubeadm | head   — only when the task gives no version
 
 # BEAT 2 — the binary, then the control plane
 sudo apt install -y --allow-change-held-packages kubeadm=$v
-sudo kubeadm upgrade apply v1.35.9 -y           # kubeadm format: WITH v, NO -1.1   ⏱ 2–4 min
+sudo kubeadm upgrade apply v1.37.2 -y           # kubeadm format: WITH v, NO -1.1   ⏱ 2–4 min
 ```
 
 ⏱ **While `upgrade apply` runs, do the worker's pre-stage in a second terminal**
@@ -257,8 +250,8 @@ before cp1 has even finished.
 ```bash
 # ▶▶ w1 — beats 1–2: can run while cp1's apply is still going
 hostname
-v=1.35.9-1.1
-sudo sed -i 's|v1.34|v1.35|' /etc/apt/sources.list.d/kubernetes.list
+v=1.37.2-1.1
+sudo sed -i 's|v1.36|v1.37|' /etc/apt/sources.list.d/kubernetes.list
 sudo apt update && sudo apt install -y --allow-change-held-packages kubeadm=$v
 ```
 ```bash
@@ -301,7 +294,7 @@ kubectl -n kube-system get po etcd-cp1 -o jsonpath='{.spec.containers[0].image}{
 kubectl get --raw='/readyz?verbose' | tail -3
 ```
 
-⚠️ **"Ready and v1.35.8 on all three nodes" does not mean the upgrade is
+⚠️ **"Ready and v1.37.1 on all three nodes" does not mean the upgrade is
 complete.** It means the kubelet was upgraded. A stale CoreDNS or kube-proxy
 coexists with that output in silence.
 
@@ -333,7 +326,7 @@ keyboard clock separately.
 
 ```
 VAR       v=<x.y.z-1.1>                                                      [each node]
-REPO      sudo sed -i 's|v1.34|v1.35|' /etc/apt/sources.list.d/kubernetes.list   [each node]
+REPO      sudo sed -i 's|v1.36|v1.37|' /etc/apt/sources.list.d/kubernetes.list   [each node]
 BINARY    sudo apt update && sudo apt install -y --allow-change-held-packages kubeadm=$v
 CP1       sudo kubeadm upgrade apply v<x.y.z> -y      ⏱ → meanwhile REPO+BINARY on w1
           DRAIN cp1 → KUBELET → BACK cp1
@@ -346,7 +339,7 @@ BACK      kubectl uncordon <node>                                           [cp1
 PROVE     get nodes + kube-proxy DS image + coredns image + apiserver/etcd image + apt-mark showhold
 ```
 
-Versions: `v1.35.9` for kubeadm · `1.35.9-1.1` for apt. **cp1:** binary → apply →
+Versions: `v1.37.2` for kubeadm · `1.37.2-1.1` for apt. **cp1:** binary → apply →
 drain → kubelet → uncordon. **Worker:** binary → `upgrade node` → drain → kubelet →
 uncordon.
 
@@ -354,9 +347,9 @@ uncordon.
 
 | Error | Cause |
 |---|---|
-| `apt install kubeadm=v1.35.8` | apt **never** takes a `v`: `1.35.8-1.1`. `kubeadm` **always** does: `v1.35.8`. Read them from `apt-cache madison` and `kubeadm upgrade plan` |
-| `madison` shows no 1.35 | The repo URL carries the minor; bump it first |
-| Landed on 1.35.10 when the task said 1.35.8 | No version pinned — apt took the newest in the repo |
+| `apt install kubeadm=v1.37.1` | apt **never** takes a `v`: `1.37.1-1.1`. `kubeadm` **always** does: `v1.37.1`. Read them from `apt-cache madison` and `kubeadm upgrade plan` |
+| `madison` shows no 1.37 | The repo URL carries the minor; bump it first |
+| Landed on 1.37.2 when the task said 1.37.1 | No version pinned — apt took the newest in the repo |
 | `kubeadm upgrade node` fails on the worker | Ran before cp1's `apply` finished |
 | `E: Held packages were changed` | Held package installed without `--allow-change-held-packages` (or without `unhold`) |
 | `apt-mark showhold` empty after the upgrade | The flag removed the holds. Re-hold in the kubelet line |
@@ -566,7 +559,7 @@ API no longer knows them. **etcd decides, the nodes obey.**
 | connection refused / TLS error | `http://` or port 2380 — clients are **https**, **2379** |
 | `permission denied` | No `sudo`: `server.key` is root-only |
 | `etcdutl` refuses to restore | `--data-dir` already exists — new name every run |
-| 404 downloading etcd | Image tag `3.6.6-0` used as the release `v3.6.6` |
+| 404 downloading etcd | Image tag `3.7.0-0` used as the release `v3.7.0` |
 | `no such file or directory` on the manifests | `/etc/kubernetes/manifests/` — `etc` not `etcd`, plural |
 | `get <type>` lists an object that `get <type> <name>` says is NotFound | The API server served its **watch cache**. It never restarted. Restart it, and never restore without stopping the control plane |
 | `unknown command` on `etcdutl status` | The group is `snapshot`: `etcdutl snapshot status` |
@@ -901,15 +894,15 @@ than 4 hours of troubleshooting practice. **Decided, not deferred.**
 Wording as the CKA phrases it. No verification handed to you. No `multipass`
 between the start and the stop — if you break it, fix it forward.
 
-🧪 **Start from `lab-v134`** (1.34.11, alias, crictl, etcd 3.6.5 on cp1).
+🧪 **Start from `lab-v136`** (1.36.6, alias, crictl, yq, etcd 3.6.8 + helm on cp1).
 Everything Set 1 needs is inside it — no setup before the clock.
 
 ```
 Task 1  (weight 8%)                                          target 12 min
 Context: k8s-lab
 
-The cluster is running v1.34.11. Upgrade the control plane node cp1 and the
-worker node w1 to v1.35.8. Do not upgrade w2.
+The cluster is running v1.36.6. Upgrade the control plane node cp1 and the
+worker node w1 to v1.37.1. Do not upgrade w2.
 Ensure that after the upgrade both upgraded nodes are able to accept workloads.
 ```
 
@@ -939,7 +932,7 @@ Drill these once each; the shape changes, the procedure does not.
 | "Upgrade **only** the control plane node" | Do you stop, or do you touch the workers anyway |
 | "**Finish** the upgrade — cp1 has already been upgraded" | Can you recognise the current state before acting |
 | "After the upgrade the node accepts no workloads. Fix it." | `uncordon` |
-| "Upgrade to **1.36**" from 1.34 | One minor at a time — the answer is *two* upgrades, or a refusal |
+| "Upgrade to **1.37**" from 1.35 | One minor at a time — the answer is *two* upgrades, or a refusal |
 | "Restore etcd from `/opt/backup.db`. The object `x` must exist afterwards." | The verification is named in the task; step 3 (hostPath) is where it fails |
 
 <details>
@@ -947,7 +940,7 @@ Drill these once each; the shape changes, the procedure does not.
 
 ```bash
 # Task 1
-kubectl get nodes    # cp1 v1.35.8 Ready · w1 v1.35.8 Ready · w2 v1.34.11 Ready
+kubectl get nodes    # cp1 v1.37.1 Ready · w1 v1.37.1 Ready · w2 v1.36.6 Ready
                      # NOTHING SchedulingDisabled
 # Task 2
 sudo etcdutl snapshot status /opt/etcd-backup.db --write-out=table

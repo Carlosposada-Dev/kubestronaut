@@ -3,7 +3,7 @@ domain: D3 — Services and Networking
 weight: 20%
 exams: [CKA, CKAD, CKS]
 theory: notes_05
-k8s_version: v1.35
+k8s_version: v1.37
 status: draft | drilled | timed-clean
 window: W2 — Mon 21 to Thu 24 Sep
 ---

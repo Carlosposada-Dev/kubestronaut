@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Prove the build: tool matrix per node × snapshot, acceptance on the default base, IPs unchanged.
-# Leaves cp1/w1/w2 on lab-v<next> and w3 on prep<next>, all running. Runs on the HOST (WSL).
+# Leaves cp1/w1/w2 on lab-v<next> and w3 on prep<next>, all running. Runs on the lab HOST.
 set -euo pipefail
 cd "$(dirname "$0")"
 source ./common.sh
@@ -38,6 +38,7 @@ multipass exec cp1 -- rm -f /tmp/acceptance.sh /tmp/audit.sh
 for n in w1 w2 w3; do multipass exec "$n" -- rm -f /tmp/audit.sh; done
 
 log "IPs and everything that depends on them"
+w3_ip_record
 echo "cp1=$(ip cp1) w1=$(ip w1) w2=$(ip w2) w3=$(ip w3)"
 [ "$(ip w3)" = "$W3_IP" ] && echo "PASS  w3 kept $W3_IP" || echo "FAIL  w3 is $(ip w3), expected $W3_IP"
 multipass exec cp1 -- bash -c 'ssh w1 hostname && ssh w2 hostname' >/dev/null 2>&1 \

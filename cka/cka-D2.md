@@ -3,7 +3,7 @@ domain: D2 — Workloads and Scheduling
 weight: 15%
 exams: [CKA, CKAD]
 theory: notes_03, notes_02
-k8s_version: v1.35
+k8s_version: v1.37
 status: draft | drilled | timed-clean
 window: W3 — Mon 28 Sep, Tue 29 Sep
 ---

@@ -320,7 +320,7 @@ kubectl get nodes; kubectl -n kube-system get pods   # 🔍 Ready · coredns Run
 
 - **`create`, never `apply`**: the `Installation` CRD is too large for the
   `last-applied-configuration` annotation — `apply` fails with *annotations: Too long*.
-- `custom-resources.yaml` holds four objects in v3.32: `Installation default`
+- `custom-resources.yaml` holds four objects in v3.33 (same as v3.32, checked 1 Nov): `Installation default`
   (the field: `spec.calicoNetwork.ipPools[].cidr`), `APIServer`, `Goldmane`, `Whisker`.
 - `no matches for kind "Installation"` → this version ships its CRDs separately:
   `operator-crds.yaml`, same directory, create it first.

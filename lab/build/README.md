@@ -1,7 +1,7 @@
 # Lab build scripts
 
-Rebuild and verify the multipass lab described in `plan.md §8`. Run from the lab host (WSL), as the
-normal user. Every script resolves versions at run time and can be re-run.
+Rebuild and verify the multipass lab described in `plan.md §8`. Run from the lab host (any Linux or WSL
+machine running multipass), as the normal user. Every script resolves versions at run time and can be re-run.
 
 | Script | What it does |
 |---|---|

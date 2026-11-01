@@ -3,7 +3,7 @@ domain: D4 — Storage
 weight: 10%
 exams: [CKA, CKAD]
 theory: notes_06
-k8s_version: v1.35
+k8s_version: v1.37
 status: draft | drilled | timed-clean
 window: W2 — Fri 25, Sat 26 Sep
 ---

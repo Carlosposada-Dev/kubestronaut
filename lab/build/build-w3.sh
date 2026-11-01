@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # w3 snapshot prep<minor>: cleanw3 + node prep pinned to NEXT (same patch as lab-v<next>), tools, NOT joined.
-# Runs on the HOST (WSL). cleanw3 itself is never modified.
+# Runs on the lab HOST. cleanw3 itself is never modified.
 #   CONFIRM=yes ./build-w3.sh     (restoring cleanw3 discards w3's current state)
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -17,6 +17,7 @@ multipass stop w3 >/dev/null
 multipass restore w3.cleanw3 --destructive >/dev/null
 multipass start w3 >/dev/null
 wait_ssh w3
+w3_ip_record
 
 log "node prep $NEXT on w3"
 multipass transfer prep-node.sh w3:/home/ubuntu/prep-node.sh

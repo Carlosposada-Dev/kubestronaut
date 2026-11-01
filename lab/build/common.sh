@@ -1,4 +1,4 @@
-# Shared helpers for the lab build scripts. Sourced, never executed. Runs on the HOST (WSL).
+# Shared helpers for the lab build scripts. Sourced, never executed. Runs on the lab HOST.
 
 log() { echo "== [$(date +%H:%M:%S)] $*"; }
 ip()  { multipass list --format csv | awk -F, -v n="$1" '$1==n{print $3}'; }
@@ -54,8 +54,21 @@ helm_tool() {  # helm 3 on cp1, installed once
   multipass exec cp1 -- helm version --short | cut -d+ -f1
 }
 
-W3_IP=${W3_IP:-10.97.0.241}   # w3 is never recreated, so its lease (and IP) is stable
-IPS_FILE=${IPS_FILE:-$(dirname "${BASH_SOURCE[0]}")/lab-ips.env}   # written by build-lab.sh after launch
+IPS_FILE=${IPS_FILE:-$(dirname "${BASH_SOURCE[0]}")/lab-ips.env}   # per machine, gitignored; written by build-lab.sh
+# w3 is never recreated, so its lease (and IP) is stable on each lab host — but differs between hosts.
+# Learned once per machine by w3_ip_record and kept in lab-ips.env; never hardcoded here.
+W3_IP=${W3_IP:-$(grep -s '^w3=' "$IPS_FILE" | cut -d= -f2 || true)}
+
+w3_ip_record() {  # make sure W3_IP is known on this machine; boots w3 briefly if it is stopped
+  [[ $W3_IP =~ ^[0-9.]+$ ]] && return 0
+  local state; state=$(multipass list --format csv | awk -F, '$1=="w3"{print $2}')
+  [ "$state" = Running ] || { multipass start w3 >/dev/null; wait_ssh w3; }
+  W3_IP=$(ip w3)
+  [ "$state" = Running ] || multipass stop w3 >/dev/null
+  [[ $W3_IP =~ ^[0-9.]+$ ]] || { echo "cannot learn w3's IP"; return 1; }
+  { grep -sv '^w3=' "$IPS_FILE" || true; echo "w3=$W3_IP"; } > "$IPS_FILE.tmp" && mv "$IPS_FILE.tmp" "$IPS_FILE"
+  log "w3=$W3_IP recorded in $(basename "$IPS_FILE")"
+}
 
 node_ip() {  # live IP, or the one recorded at build time when the VM is stopped (stopped VMs show none)
   local v; v=$(ip "$1")

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # kubeadm upgrade of cp1, w1, w2 to TARGET (one minor up), following the official procedure.
-# Usage: upgrade.sh 1.37.2   — runs on the HOST (WSL); every Kubernetes command runs inside a VM.
+# Usage: upgrade.sh 1.37.2   — runs on the lab HOST; every Kubernetes command runs inside a VM.
 # Idempotent: a node already on TARGET is skipped, so a failed run can simply be re-run.
 set -euo pipefail
 cd "$(dirname "$0")"

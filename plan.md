@@ -204,7 +204,7 @@ review from §6.3, first 20 min after the per-host line.
 | Tue 3 | d | **Set 1 + Set 2 exam mode** · coach sims (exam wording, encoded breaks) on the weakest domain by evidence · Mock B optional |
 | **Wed 4** | d | **Exam Simulator A2 — go/no-go: ≥ 60% sit · < 60% reschedule tonight to Sat 14 Nov** (§5) |
 | Thu 5 | d | A2 misses · weakest domain · `mistakes.md` full pass |
-| Fri 6 | d | Literals only · restore `lab-v135` · **no new material** · sleep early |
+| Fri 6 | d | Literals only · restore `lab-v137` · **no new material** · sleep early |
 | **Sat 7** | | **CKA** — check in 30 min early · `use-context` first · 8-minute rule |
 
 **Done when — all three:** A2 ≥ 60% (target 75%) · upgrade and etcd restore from
@@ -300,10 +300,10 @@ domain: `CKA D1 — Cluster Architecture` · `CKA D3 — Services & Networking` 
 
 | Item | Value |
 |---|---|
-| Lab host | **Laptop, WSL Ubuntu 24.04** (since 29 Oct) — multipass 1.17 on nested KVM; `.wslconfig` caps WSL at 6 threads / 16 GB. The desktop still holds the old `lab-v134`/`lab-v135` cluster (10.167.152.x) — legacy, not updated |
+| Lab host | **Two, same build (`lab/build/`), either one works:** laptop — WSL Ubuntu 24.04, multipass 1.17 on nested KVM, `.wslconfig` caps WSL at 6 threads / 16 GB (since 29 Oct) · desktop — Ubuntu, multipass 1.17, 12 threads / 45 GB (rebuilt 1 Nov; old `lab-v134`/`lab-v135` deleted). IPs differ per host — each host records its own in `lab/build/lab-ips.env` (gitignored) |
 | Cluster | multipass/QEMU-KVM · `cp1` (2 vCPU / 4 GB) `w1` `w2` (2 vCPU / 3 GB) · kubeadm **v1.37.2** (`lab-v137`) · Calico **v3.33.0** via tigera-operator + `Installation` CR |
-| Disposable node | **`w3`** `10.97.0.241` (2 vCPU / 3 GB) — snapshots **`cleanw3`** = bare Ubuntu (1.2 target) and **`prep137`** = node prep done on 1.37.2, held, tools, never joined (1.3 / 1.7 start here). Every install/reset/init runs there, never on cp1/w1/w2 |
-| Control-plane IP | `10.97.0.61` · w1 `10.97.0.146` · w2 `10.97.0.213` (rebuilt 31 Oct — **w2 now has cp1's old IP**) |
+| Disposable node | **`w3`** (laptop `10.97.0.241` · desktop `10.167.152.248`) (2 vCPU / 3 GB) — snapshots **`cleanw3`** = bare Ubuntu (1.2 target) and **`prep137`** = node prep done on 1.37.2, held, tools, never joined (1.3 / 1.7 start here). Every install/reset/init runs there, never on cp1/w1/w2 |
+| Control-plane IP | **Laptop:** `10.97.0.61` · w1 `10.97.0.146` · w2 `10.97.0.213` (rebuilt 31 Oct — **w2 now has cp1's old IP**) · **Desktop:** cp1 `10.167.152.197` · w1 `.100` · w2 `.11` · w3 `.248` |
 | Pod / Service CIDR | `10.244.0.0/16` · `10.96.0.0/12` |
 | Exam version | **v1.37** (LF page, checked 29 Oct — see §13) |
 
@@ -583,6 +583,7 @@ copy wins on conflict.**
 | **10-16** | plan | — | **CKA rescheduled → Sat 7 Nov.** CKAD Sat 21 Nov, CKS Sun 29 Nov (free shot). **Expiration of CKA, CKAD, CKS confirmed 30 Nov** (open item since 1 Sep closed). Go/no-go rewritten: A2 ≥ 60% sit, < 60% move to 14 Nov. Practice week 31 Oct – 6 Nov conditional on Fri 30 Oct. **Plan v5.0** | — |
 | **10-29** | lab | — | **Exam now v1.37** (LF page). Lab moved to the laptop (WSL) and **rebuilt**: `lab-v136` (1.36.5, upgrade source) + `lab-v137` (1.37.1, default), Calico 3.33.0, yq added (exam ships it); 1.34 reached EOL 27 Oct. Old `lab-v134`/`lab-v135` retired. **Literal refresh owed** in `cka-D1-2-lifecycle.md` (drill still 1.34 → 1.35.8) | — |
 | **10-31** | CKA | _owed_ | **D1-1 session (laptop, `w3` + cp1).** Stage-2 shape format adopted. **1.2:** run 2 no card **9:11** (target 10:00) · blind break/fix **3:59** (4:00) · recall 1/3 (rows 96–98) · runbook r6. **1.3:** stages 1–4 on v1.37 + Calico 3.33 — join 5:33 ❌ → **2:42 ✅** (+ desktop run ✅) · decommission **3:10 ✅** → join and decommission closed · CNI with a hidden CIDR: config 3:46 but declared done without `tigerastatus` (row 106) · Calico ready only at 16:16 on a 2-CPU node. **1.7:** stages 1–3 + card; sim A coached ×2 on cp1 (cert path typo 10:27 · YAML indent). Measured: v3.33 operator installs its own CRDs; `Ready` = CNI conflist exists; `kubeadm reset` keeps images; cri-dockerd v0.4.10 `.deb` inspected. **Lab rebuilt** (`lab/build/`): `lab-v136` 1.36.6 · `lab-v137` 1.37.2 · `w3.prep137`; new IPs (§8). Next: 1.7 clean blind sim A · cri-dockerd sim (docker.io on `w3`, then restore `prep137`) · §9 Set 2 · R1 Mon 2 Nov (1.2 + CNI with proof) · D1-2 / D1-3 in their own sessions | _owed_ |
+| **11-01** | lab | — | **Versions re-verified against official sources:** LF pages — CKA **v1.37**, CKAD v1.37, CKS v1.35; `cncf/curriculum` CKA v1.37 PDF (15 Oct) **text identical to v1.35**; newest patches 1.36.6 / 1.37.2 (no 1.38 yet); etcd 3.6.8 / 3.7.0 (kubeadm constants). **Literal refresh done:** `cka-D1-2-lifecycle.md` r10 (drill 1.36.6 → 1.37.1 from `lab-v136`), `cka-D1.md` r13, D2–D5, curriculum. **Desktop lab rebuilt** with `lab/build/` (same versions as the laptop) — 3 runs: acceptance raced DNS, then `tigerastatus` (fast host); fixed with a DNS retry and `kubectl wait … tigerastatus/calico`. `w3` IP no longer hardcoded | — |
 
 **Owed:** hours + confidence for 14–23 Sep and 27 Sep; the 18–23 Sep drill times for
 `cka-D1.md §7`; the 28 Sep – 5 Oct record (what, if anything, was done).

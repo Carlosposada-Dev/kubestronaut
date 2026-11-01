@@ -3,7 +3,7 @@ domain: D5 — Troubleshooting
 weight: 30%
 exams: [CKA, CKAD]
 theory: notes_08, notes_09, notes_01, notes_05, notes_06
-k8s_version: v1.35
+k8s_version: v1.37
 status: draft | drilled | timed-clean
 window: W3 — Thu 1 to Sat 3 Oct + both Sundays
 ---
@@ -122,7 +122,7 @@ container is never created, so `crictl ps -a` shows nothing at all.
 but still answers).
 
 **Restore rule for your lab:** every break/fix session starts from
-`clean-v135`. If a fix takes more than 20 minutes, restore and redo the break —
+`lab-v137`. If a fix takes more than 20 minutes, restore and redo the break —
 you are learning the failure, not the archaeology.
 
 ---

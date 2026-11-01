@@ -3,9 +3,9 @@ domain: D1 — Cluster Architecture, Installation & Configuration
 weight: 25%
 exams: [CKA]
 theory: notes_01, notes_02, notes_07, notes_10
-k8s_version: v1.37.1 (lab-v137) · upgrade source v1.36.5 (lab-v136)
-lab: 3× multipass VM (cp1, w1, w2) in WSL Ubuntu 24.04 on the laptop · Calico v3.33.0 via tigera-operator
-revision: 2026-10-29 (r12 — lab rebuilt for the v1.37 exam: bases lab-v137 / lab-v136, yq on all nodes; §0.3 inventory and restore commands updated) · 2026-09-26 (r11 — §7 rows 9/10 reinstated as w3 sims, rows 13–14 added; §8 1.2/1.3/1.7 on R1; w3.cleanw3 in inventory) · r10 2026-09-26 (snapshot bases lab-v135 / lab-v134) · r9 2026-09-26 ( §0 rewritten from the LF page: per-host line replaces the boot block; lab bashrc mirrors the exam) · prev r7 2026-09-19 (§C/1.4c/1.5 closed) · prev r6 2026-09-17 ( Template C adopted for the content files; snapshot card; restore loop fixed) · prev r4 2026-09-16 · prev r3 2026-09-14 split into index + 3 content files
+k8s_version: v1.37.2 (lab-v137) · upgrade source v1.36.6 (lab-v136)
+lab: 3× multipass VM (cp1, w1, w2) + w3 on the lab host (laptop WSL or desktop — same build, `lab/build/`) · Calico v3.33.0 via tigera-operator
+revision: 2026-11-01 (r13 — §0.4 tools block and §7 row 2 on lab-v137 / lab-v136, etcd 3.7.0 / 3.6.8) · 2026-10-29 (r12 — lab rebuilt for the v1.37 exam: bases lab-v137 / lab-v136, yq on all nodes; §0.3 inventory and restore commands updated) · 2026-09-26 (r11 — §7 rows 9/10 reinstated as w3 sims, rows 13–14 added; §8 1.2/1.3/1.7 on R1; w3.cleanw3 in inventory) · r10 2026-09-26 (snapshot bases lab-v135 / lab-v134) · r9 2026-09-26 ( §0 rewritten from the LF page: per-host line replaces the boot block; lab bashrc mirrors the exam) · prev r7 2026-09-19 (§C/1.4c/1.5 closed) · prev r6 2026-09-17 ( Template C adopted for the content files; snapshot card; restore loop fixed) · prev r4 2026-09-16 · prev r3 2026-09-14 split into index + 3 content files
 ---
 
 # D1 — Cluster Architecture, Installation & Configuration (25%)
@@ -249,7 +249,7 @@ anything. Fix: `sudo systemctl restart systemd-timesyncd`.
 
 ---
 
-## §0.4 🧪 One-time lab setup — baked into `lab-v135` and `lab-v134` (26 Sep)
+## §0.4 🧪 One-time lab setup — baked into `lab-v137` and `lab-v136` (`lab/build/`, 31 Oct)
 
 ```bash
 # ▶▶ cp1
@@ -307,16 +307,16 @@ ssh w1 hostname && ssh w2 hostname
 
 After the 1.4b labs, cp1 carries `/var/lib/etcd-restore*`, `/opt/bk/*.db` and an
 `etcd.yaml` whose `hostPath` no longer points at `/var/lib/etcd`. Harmless, but a
-timed re-run of rows 3–4 must start from **`lab-v135`**, so the cluster is in
+timed re-run of rows 3–4 must start from **`lab-v137`**, so the cluster is in
 the state the exam hands you.
 
 ### Tools block — added 16 Sep
 
 ```bash
-# ▶▶ cp1 🧪 — baked into lab-v135 / lab-v134 · V = the etcd IMAGE version without -0 (3.6.6 on 1.35, 3.6.5 on 1.34)
+# ▶▶ cp1 🧪 — baked into lab-v137 / lab-v136 · V = the etcd IMAGE version without -0 (3.7.0 on 1.37, 3.6.8 on 1.36)
 sudo apt install -y cri-tools
 printf 'runtime-endpoint: unix:///run/containerd/containerd.sock\n' | sudo tee /etc/crictl.yaml
-V=3.6.6        # release version — NOT the image tag 3.6.6-0
+V=3.7.0        # release version — NOT the image tag 3.7.0-0
 curl -fsSL -o /tmp/etcd.tgz https://github.com/etcd-io/etcd/releases/download/v$V/etcd-v$V-linux-amd64.tar.gz
 tar xzf /tmp/etcd.tgz -C /tmp
 sudo mv /tmp/etcd-v$V-linux-amd64/etcdctl /tmp/etcd-v$V-linux-amd64/etcdutl /usr/local/bin/
@@ -334,7 +334,7 @@ Re-run until **Actual ≤ Target twice in a row, without looking.**
 | # | Task | File | Runs on | Target | A1 | A2 | A3 | ✅ |
 |---|---|---|---|---|---|---|---|---|
 | 1 | Per-host line (§0) from memory | — | any host | **0:10** | ☐ | ☐ | | **retargeted 26 Sep**: the 4-line block (A1 1:20 on 19 Sep) retired — `k` + completion are preconfigured in the exam |
-| 2 | `kubeadm upgrade` from `lab-v134` | -2 | cp1 + ssh | **cp1 only 8:00 · cp1 + 1 worker 12:00** | 35:00 | 18:00 | 24:00 (3 nodes) | **R1 26 Sep: 20:00** · **R2 26 Sep: 18:00** (3 nodes, flag, old order, no overlap). Next: docs worker order + overlap during `apply` |
+| 2 | `kubeadm upgrade` from `lab-v136` (→ 1.37) | -2 | cp1 + ssh | **cp1 only 8:00 · cp1 + 1 worker 12:00** | 35:00 | 18:00 | 24:00 (3 nodes) | **R1 26 Sep: 20:00** · **R2 26 Sep: 18:00** (3 nodes, flag, old order, no overlap). Next: docs worker order + overlap during `apply` |
 | 3 | etcd `snapshot save` + verify | -2 | cp1 | 5:00 | **✅ 17 Sep** | ☐ Fri 18 | | |
 | 4 | etcd restore, cluster back, object present | -2 | cp1 | 10:00 | **✅ 17 Sep** | ☐ Fri 18 | | A1 = rows 3+4 together **< 7:00**, but with the **discarded** in-place variant and warm. A2 must be the **safe path, cold** |
 | 5 | `certs renew all` + restart + refresh kubeconfig | -2 | cp1 | 6:00 | ✅ 19 Sep (untimed, taught) | ☐ timed | | |

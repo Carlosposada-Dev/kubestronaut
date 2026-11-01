@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Rebuild the CKA lab: cp1 + w1 + w2 on BASE, snapshot lab-v<base minor>, kubeadm-upgrade to NEXT,
 # snapshot lab-v<next minor>. w3 is handled by build-w3.sh.
-# Runs on the HOST (WSL). Steps: lab/lab-kubeadm-3-nodos-tutorial.md + cka-D1.md §0.4.
+# Runs on the lab HOST. Steps: lab/lab-kubeadm-3-nodos-tutorial.md + cka-D1.md §0.4.
 #
 #   CONFIRM=yes ./build-lab.sh                delete + relaunch the VMs (default; new MACs → new IPs,
 #                                             ssh and /etc/hosts are re-pointed before any snapshot)
@@ -50,7 +50,8 @@ else
 fi
 for n in $NODES; do wait_ssh "$n"; [ -n "$(ip "$n")" ] || { echo "$n has no IP"; exit 1; }; done
 CP_IP=$(ip cp1)
-printf 'cp1=%s\nw1=%s\nw2=%s\n' "$CP_IP" "$(ip w1)" "$(ip w2)" > "$IPS_FILE"
+w3_ip_record
+printf 'cp1=%s\nw1=%s\nw2=%s\nw3=%s\n' "$CP_IP" "$(ip w1)" "$(ip w2)" "$W3_IP" > "$IPS_FILE"
 log "cp1=$CP_IP w1=$(ip w1) w2=$(ip w2) (recorded in $(basename "$IPS_FILE"))"
 
 # ---------- 2. Node prep + cluster on BASE ----------

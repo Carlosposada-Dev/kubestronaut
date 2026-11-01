@@ -9,6 +9,10 @@ tiempo_real: ~2 h
 
 # Clúster Kubernetes de 3 nodos con kubeadm sobre Ubuntu
 
+> **Historical build guide (31 Aug, v1.34).** It explains every step and stays as the
+> reference for *why*. The current lab (v1.36 → v1.37, Calico 3.33) is built by the
+> scripts in **`lab/build/`** — see its README and `plan.md §8`.
+
 Esta guía levanta un clúster Kubernetes real —un nodo de plano de control y dos
 workers— en máquinas virtuales locales, usando `kubeadm`. No es minikube, no es
 kind, no es un clúster gestionado: es la misma instalación que hace un

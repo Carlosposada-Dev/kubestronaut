@@ -6,6 +6,8 @@ check() { local name=$1; shift; if "$@"; then echo "PASS  $name"; else echo "FAI
 
 kubectl wait -n calico-system --for=condition=Ready pod -l k8s-app=calico-node --timeout=300s >/dev/null 2>&1
 kubectl wait -n kube-system --for=condition=Ready pod -l k8s-app=kube-dns --timeout=300s >/dev/null 2>&1
+# calico-node Ready comes before the operator reports Available (~30 s later on a fast host, 1 Nov)
+kubectl wait --for=condition=Available tigerastatus/calico --timeout=300s >/dev/null 2>&1
 
 echo "== Gates"
 ready=$(kubectl get nodes --no-headers | awk '$2=="Ready"' | wc -l)
@@ -28,8 +30,14 @@ sudo ls /etc/kubernetes/manifests/
 echo "== 3. Mirror Pod hash"
 kubectl get pod kube-apiserver-cp1 -n kube-system -o jsonpath='{.metadata.annotations.kubernetes\.io/config\.mirror}{"\n"}'
 echo "== 4. DNS + ClusterIP"
-out=$(kubectl run t --image=busybox:1.28 --restart=Never -i --rm --quiet -- \
-  sh -c 'nslookup kubernetes.default; wget -qO- -T3 10.96.0.1:443 2>&1 | head -1' 2>/dev/null)
+# Up to 3 tries: on a cluster that just went Ready, the first Pod can lose the attach while the
+# image is still pulling and print nothing (seen 1 Nov on a fresh build; a re-run passed).
+for _ in 1 2 3; do
+  out=$(kubectl run t --image=busybox:1.28 --restart=Never -i --rm --quiet -- \
+    sh -c 'nslookup kubernetes.default; wget -qO- -T3 10.96.0.1:443 2>&1 | head -1' 2>/dev/null)
+  grep -q 'Address 1: 10.96.0.1' <<<"$out" && break
+  kubectl delete pod t --ignore-not-found --wait >/dev/null 2>&1; sleep 10
+done
 echo "$out" | awk '!seen[$0]++'
 check "DNS resolves kubernetes.default to 10.96.0.1" grep -q 'Address 1: 10.96.0.1' <<<"$out"
 echo "== 5. Scheduling (no replica on cp1)"

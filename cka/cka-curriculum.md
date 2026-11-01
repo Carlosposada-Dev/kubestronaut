@@ -2,7 +2,9 @@
 
 > Source: **CNCF open-source curriculum**, `github.com/cncf/curriculum` → `cka/README.md`
 > (domains and weights) + Linux Foundation CKA certification page (exam mechanics),
-> both read **11 Sep 2026**. Curriculum revision tracks **Kubernetes v1.35**.
+> both read **11 Sep 2026**. Curriculum revision tracks **Kubernetes v1.37** since
+> 15 Oct 2026 (`CKA_Curriculum_v1.37.pdf`); its text is **identical** to v1.35 —
+> only the version label changed (diffed 1 Nov). Exam environment: v1.37 (LF page, 1 Nov).
 > Companion to `claude/kcna-curriculum.md`. Same rule, harder bar.
 >
 > **Tick rule.** KCNA objectives were ticked when *explainable without looking*.
@@ -21,7 +23,7 @@
 | Tasks | ~15–20 hands-on tasks, no multiple choice |
 | Pass mark | **66%** |
 | Partial credit | **Yes** — an incomplete task still scores. Never leave a task blank |
-| Kubernetes version | **v1.35** |
+| Kubernetes version | **v1.37** (CKAD v1.37 · CKS v1.35 — LF pages, 1 Nov) |
 | Allowed docs | **One** browser tab: `kubernetes.io/docs`, `kubernetes.io/blog`, `helm.sh/docs` |
 | Simulator | **killer.sh — 2 sessions** included with the registration |
 | Result | Emailed ~**24 h** after the exam |

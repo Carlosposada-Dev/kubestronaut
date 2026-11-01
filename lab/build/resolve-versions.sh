@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Resolve the versions a fresh build would use today. Read-only; runs on the HOST (WSL).
+# Resolve the versions a fresh build would use today. Read-only; runs on the lab HOST.
 set -euo pipefail
 
 # Newest kubeadm in pkgs.k8s.io/core:/stable:/v<minor> — what an unpinned apt-get install picks.
