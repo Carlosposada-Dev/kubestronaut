@@ -374,7 +374,7 @@ cidr     kubectl -n kube-system get pod -l component=kube-controller-manager -o 
 operator kubectl create -f <URL from task>
 cr       curl -sLO <same dir>/custom-resources.yaml → grep cidr → vim +/cidr :s → grep cidr → kubectl create -f
 prove    get tigerastatus (calico True) · get nodes Ready · coredns Running   (2–4 min; webhook "connection refused" meanwhile = wait)
-token    sudo kubeadm token create --print-join-command       [cp1]
+token    kubeadm token create --print-join-command            [cp1]  (sudo only if you have no ~/.kube/config)
 join     sudo kubeadm join …  (paste, Ctrl+Shift+V)            [node]
 verify   get nodes -o wide: Ready + VERSION = cp1 · calico-node 1/1 on the node
 off      drain --ignore-daemonsets --delete-emptydir-data → delete node   [cp1]
@@ -390,7 +390,7 @@ clean    sudo kubeadm reset -f && sudo rm -rf /etc/cni/net.d ~/.kube      [node]
 | `no matches for kind "Installation"` | v3.33: the operator installs its own CRDs (`-manage-crds=true`) seconds after starting — wait 20 s, re-run. Still failing after a minute (or an older version) → `operator-crds.yaml`, same directory, create it first |
 | `tigerastatus` full of `failed calling webhook … connection refused` | Normal for the first minutes — the webhook Pods need the network `calico-node` is still building. A fault only once `calico-node` is 1/1 |
 | Node `Ready`, `calico-node` still 0/1 (31 Oct, ~10 min) | `Ready` flips when `10-calico.conflist` lands, not when Calico works — prove with `tigerastatus` |
-| `kubeadm token create` → `admin.conf: permission denied` | Missing `sudo` — kubeadm reads the root-owned `/etc/kubernetes/admin.conf` |
+| `kubeadm token create` → `admin.conf: permission denied` | No kubeconfig of your own: kubeadm looks in `$KUBECONFIG` → `~/.kube/config` → `/etc/kubernetes/admin.conf` (root 600). With `~/.kube/config` it works without `sudo` (31 Oct); `sudo` works always |
 | Calico pool set to a `/24` | Took `describe node`'s `PodCIDR` (node slice) instead of `--cluster-cidr` |
 | `grep -n cdir` empty → edited blind | A typo'd check proves nothing — re-run it right |
 | `sed` put the runbook's CIDR, not the cluster's | Copied a value instead of reading one — `cat`/`grep` after every edit |
@@ -501,15 +501,23 @@ ls -l /run/cri-dockerd.sock                     # 🔍 the CRI socket exists
 
 ### Command card — 1.7
 ```
-cri      grep containerRuntimeEndpoint /var/lib/kubelet/config.yaml · ls -l <socket>
+runtime  kubectl get nodes -o wide → CONTAINER-RUNTIME column (fastest "which runtime?")
+cri      grep containerRuntimeEndpoint /var/lib/kubelet/config.yaml · ls -l <socket> (/var/run → /run)
 tool     cri-tools + /etc/crictl.yaml
-dead?    sudo crictl ps -a --name <c>  → Exited = logs · nothing = journalctl -u kubelet
+dead?    sudo crictl ps -a --name <c>  → Exited = logs · nothing = journalctl -u kubelet   (top row = newest)
 logs     sudo crictl logs <id> 2>&1 | tail -5     (W lines = cause, F line = death)
-fix      targeted grep → sudo vim manifest → crictl ps --name (new ID) → restart kubelet if stuck
-cni      sudo ls /etc/cni/net.d/ (what is used) · ls /opt/cni/bin/ (what is available)
-csi      kubectl get csidrivers · get csinodes
-deb      sudo dpkg -i X.deb → apt-get install -f -y if deps → dpkg -L | grep service → enable --now
+fix      targeted grep -n -- '--flag' → backup OUTSIDE manifests/ → sudo vim → crictl ps --name (new POD ID) → restart kubelet if stuck
+cni      sudo ls /etc/cni/net.d/ (what is used) · ls /opt/cni/bin/ (what is available) · "type" = binary name
+csi      kubectl get csidrivers · get csinode <n>
+deb      sudo dpkg -i X.deb → apt-get install -f -y if deps → dpkg -L cri-dockerd | grep service → enable --now cri-docker.service → /run/cri-dockerd.sock
+sysctl   task keys → /etc/sysctl.d/ → sysctl --system → cannot stat = module (nf_conntrack, br_netfilter)
 ```
+
+Measured 31 Oct (lab-v137, Calico 3.33): `/opt/cni/bin` on w3 again holds `flannel` next to
+`calico` and `calico-ipam` · the conflist chains `calico` (ipam `calico-ipam`) + `portmap` ·
+the only CSI driver is Calico's own `csi.tigera.io` (mode `Ephemeral`, no storage CSI in the
+lab) · cri-dockerd v0.4.10 `.deb`: package `cri-dockerd`, units `cri-docker.service` +
+`cri-docker.socket` (socket group `docker`), depends only on containerd/iptables/libseccomp2/libc6.
 
 ### Traps
 
@@ -525,6 +533,13 @@ deb      sudo dpkg -i X.deb → apt-get install -f -y if deps → dpkg -L | grep
 | `failed to create pod sandbox … plugin not found` | The conflist names a binary absent from `/opt/cni/bin/` |
 | `dpkg -i` leaves the package unconfigured | `dpkg` does not resolve dependencies → `apt-get install -f` |
 | `systemctl enable cri-dockerd` → not found | Unit name ≠ package name → `dpkg -L` |
+| `crictl logs <id> \| tail` prints nothing | Components log to stderr → `2>&1` |
+| Old `Exited` row next to a `Running` one | History (restart, restore), not a fault — read the newest row |
+| `kube-apiserver.yaml.bak` left in `manifests/` | The kubelet runs every file there — back up outside the directory |
+| `sysctl` → `cannot stat …/nf_conntrack_max` | `nf_conntrack` not loaded — `modprobe` + `modules-load.d` |
+| `journalctl -u kubelet \| grep apiserver \| tail` shows only `Failed deleting a mirror pod … :6443 refused` | Noise: the kubelet cannot reach the dead apiserver. Grep the **file name** (`kube-apiserver.yaml`) to get `Could not process manifest file` |
+| `couldn't parse as pod(yaml: line 41: did not find expected key)`, line 41 looks fine | The parser reports where it got lost — check ±2 lines; almost always indentation (`cat -A` shows tabs) |
+| `crictl logs <id> > 2&1` → a file named `2`, a background job, `1: command not found` | The redirect is `2>&1`, four characters together |
 | `crictl` warns about default endpoints | `/etc/crictl.yaml` missing |
 | `ls /etc/cni/net.d` → Permission denied | Directory is 700 root — `sudo` |
 | `<container-id>` pasted literally | Bash syntax error — placeholders are replaced, never pasted |

@@ -355,6 +355,23 @@ kubelet line.
 - I quoted `kubeadm reset`'s three-line warning from older versions; v1.37 prints one paragraph with the same three items.
 - The 1.2 break/fix wording named the category ("network requirements"). The exam gives a symptom or a literal list. From now on, exam-mode sets use that wording.
 
+### Rows 103–110 — 31 Oct, D1-1 1.3 stage 4 + 1.7 sim A
+
+| # | Source | Error | Correction | Root cause | Note | Fixed |
+|---|---|---|---|---|---|---|
+| 103 | D1-1 1.3 | Join T1 5:33 vs 3:00 — 2 min lost moving the join line from cp1 to w3 | Two terminals open before `go`; copy the line before leaving cp1. Rerun 2:42 | `SPEED` | D1-1 1.3 | ✅ 31 Oct |
+| 104 | D1-1 1.3 | "The new node waited for certs and CNI routes" before `Ready` | Certs come inside `join` (TLS bootstrap). The wait is the `calico-node` DaemonSet pulling images and writing `/etc/cni/net.d/10-calico.conflist`; containerd sees the file → `NetworkReady=true` → `Ready` | `CONF` | D1-1 1.3 | ☐ |
+| 105 | D1-1 1.3 | Did not know who removes a DaemonSet Pod during a decommission | Two halves: the API object goes when **PodGC** (controller-manager) collects Pods of a deleted node; the container goes at **`kubeadm reset`** (CRI). `drain --ignore-daemonsets` leaves both | `GAP` | D1-1 1.3 | ☐ |
+| 106 | D1-1 1.3 | CNI T3 declared done with the node `NotReady` and CoreDNS `Pending` | The `prove` line is part of the task: `tigerastatus calico True` + `Ready` + CoreDNS. In the exam: flag, move on, come back to prove | `PREC` | D1-1 1.3 | ☐ |
+| 107 | D1-1 1.3 | `crictl ps` `Running` read as "Calico is up" | `Running` = the process lives; `READY 1/1` in `kubectl get pods` = the readiness probe passes | `CONF` | D1-1 1.3 | ☐ |
+| 108 | D1-1 1.7 | `crictl logs <id> > 2&1 \| tail -5` → file `~/2`, background job, `1: command not found` | `2>&1`, four characters together | `LIT` | D1-1 1.7 | ☐ |
+| 109 | D1-1 1.7 | Sim A (cert path): read both manifests whole and checked etcd — the 26 Sep cause — 10:27 vs 6:00 | The log line carries a literal (`apiserver.cert`): grep it → `vim +<line>`. No line-by-line reading, no "last time it was etcd" | `PREC` | D1-1 1.7 | ☐ |
+| 110 | D1-1 1.7 | Sim A (YAML): took the repeated `Failed deleting a mirror pod … :6443 refused` as the cause; `tail` hid the real line | The `:6443 refused` is the symptom echoing back. Grep the file name → `couldn't parse as pod (yaml: line 41)` → check ±2 lines for indentation | `READ` | D1-1 1.7 | ☐ |
+
+**Coach errors, 31 Oct (cont.):**
+- Said `kubeadm token create` needs `sudo`. Measured: it works without it when `~/.kube/config` exists (kubeadm checks `$KUBECONFIG` → `~/.kube/config` → `admin.conf`). Card and trap corrected.
+- During the YAML sim I quoted the kubelet line from my own setup check without saying so.
+
 ### Practice scores — Block 2
 
 | Date | Paper | Score | Time used | Weakest domain |

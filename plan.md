@@ -301,9 +301,9 @@ domain: `CKA D1 — Cluster Architecture` · `CKA D3 — Services & Networking` 
 | Item | Value |
 |---|---|
 | Lab host | **Laptop, WSL Ubuntu 24.04** (since 29 Oct) — multipass 1.17 on nested KVM; `.wslconfig` caps WSL at 6 threads / 16 GB. The desktop still holds the old `lab-v134`/`lab-v135` cluster (10.167.152.x) — legacy, not updated |
-| Cluster | multipass/QEMU-KVM · `cp1` (2 vCPU / 4 GB) `w1` `w2` (2 vCPU / 3 GB) · kubeadm **v1.37.1** (`lab-v137`) · Calico **v3.33.0** via tigera-operator + `Installation` CR |
-| Disposable node | **`w3`** `10.97.0.241` (2 vCPU / 3 GB, snapshot **`cleanw3`** = bare Ubuntu) — every install/reset/init (1.2, 1.3, 1.7 sims) runs there, never on cp1/w1/w2 |
-| Control-plane IP | `10.97.0.213` · w1 `10.97.0.209` · w2 `10.97.0.122` |
+| Cluster | multipass/QEMU-KVM · `cp1` (2 vCPU / 4 GB) `w1` `w2` (2 vCPU / 3 GB) · kubeadm **v1.37.2** (`lab-v137`) · Calico **v3.33.0** via tigera-operator + `Installation` CR |
+| Disposable node | **`w3`** `10.97.0.241` (2 vCPU / 3 GB) — snapshots **`cleanw3`** = bare Ubuntu (1.2 target) and **`prep137`** = node prep done on 1.37.2, held, tools, never joined (1.3 / 1.7 start here). Every install/reset/init runs there, never on cp1/w1/w2 |
+| Control-plane IP | `10.97.0.61` · w1 `10.97.0.146` · w2 `10.97.0.213` (rebuilt 31 Oct — **w2 now has cp1's old IP**) |
 | Pod / Service CIDR | `10.244.0.0/16` · `10.96.0.0/12` |
 | Exam version | **v1.37** (LF page, checked 29 Oct — see §13) |
 
@@ -311,20 +311,24 @@ domain: `CKA D1 — Cluster Architecture` · `CKA D3 — Services & Networking` 
 
 | Snapshot | Version | SSH cp1→workers | `k` + completion in `.bashrc` | Tools | Use |
 |---|---|---|---|---|---|
-| **`lab-v137`** | 1.37.1 | ✅ | ✅ 3 nodes | crictl + yq 3 nodes · etcdctl/etcdutl **3.7.0** + helm 3.22.1 on cp1 | **Default — everything except upgrade** |
-| **`lab-v136`** | 1.36.5 | ✅ | ✅ 3 nodes | crictl + yq 3 nodes · etcdctl/etcdutl **3.6.8** + helm 3.22.1 on cp1 | **Upgrade runs only** (→ 1.37.x) |
-| `w3.cleanw3` | — | — | — | — | 1.2 / 1.3 |
+| **`lab-v137`** | 1.37.2 | ✅ | ✅ 3 nodes | crictl + yq 3 nodes · etcdctl/etcdutl **3.7.0** + helm 3.22.1 on cp1 | **Default — everything except upgrade** |
+| **`lab-v136`** | 1.36.6 | ✅ | ✅ 3 nodes | crictl + yq 3 nodes · etcdctl/etcdutl **3.6.8** + helm 3.22.1 on cp1 | **Upgrade runs only** (→ 1.37.x) |
+| `w3.cleanw3` | — | — | — | — | 1.2 (bare node) |
+| `w3.prep137` | 1.37.2 held, not joined | — | ✅ | crictl + `crictl.yaml` + yq | 1.3 join · CNI sim B · 1.7 |
 
 **Naming rule:** `lab-v<minor>` — the version says the purpose: **v136 = upgrade
 source, v137 = everything else** (the exam's minor). `lab-v137` was built by
 upgrading `lab-v136` with `kubeadm upgrade` (it is its child snapshot). The drill
 line (`$do` + `.vimrc`) is **not** in either — it is typed per host, as in the exam
-(§13). Holds on kubeadm/kubelet/kubectl present in both. Build scripts: `~/lab-build`
-on the laptop (`build-lab.sh`, `upgrade.sh`; not in this repo).
+(§13). Holds on kubeadm/kubelet/kubectl present in both. Build scripts: **`lab/build/`**
+in this repo (31 Oct; README there). Versions are resolved at build time = the
+newest patch of each minor that an unpinned `apt-get install` gives that day — so
+a later 1.2 run on `cleanw3` installs a newer patch than the cluster: **pin to the
+cluster's version**.
 
 **When the exam moves to the next minor** (LF aligns 4–8 weeks after each
-Kubernetes release), rebuild both bases one minor up: `BASE=<n-1>.x NEXT=<n>.y
-~/lab-build/build-lab.sh`.
+Kubernetes release), change the two minors in `lab/build/build-lab.sh` and
+`build-w3.sh`, then `CONFIRM=yes ./build-lab.sh && CONFIRM=yes ./build-w3.sh && ./verify-lab.sh`.
 
 **Rules:** all three VMs, stopped, together — **for `snapshot`, `restore` and
 `delete` alike** (a running VM locks its disk: `Failed to get shared "write" lock`).
@@ -578,7 +582,7 @@ copy wins on conflict.**
 | **10-06 → 10-16** | — | **0** | **~10 days with zero hours** — higher-priority paid obligations. CKA 18 Oct not sat. Mock A (10 Oct) and killer.sh A1/A2 (11/14 Oct) did not happen | — |
 | **10-16** | plan | — | **CKA rescheduled → Sat 7 Nov.** CKAD Sat 21 Nov, CKS Sun 29 Nov (free shot). **Expiration of CKA, CKAD, CKS confirmed 30 Nov** (open item since 1 Sep closed). Go/no-go rewritten: A2 ≥ 60% sit, < 60% move to 14 Nov. Practice week 31 Oct – 6 Nov conditional on Fri 30 Oct. **Plan v5.0** | — |
 | **10-29** | lab | — | **Exam now v1.37** (LF page). Lab moved to the laptop (WSL) and **rebuilt**: `lab-v136` (1.36.5, upgrade source) + `lab-v137` (1.37.1, default), Calico 3.33.0, yq added (exam ships it); 1.34 reached EOL 27 Oct. Old `lab-v134`/`lab-v135` retired. **Literal refresh owed** in `cka-D1-2-lifecycle.md` (drill still 1.34 → 1.35.8) | — |
-| **10-31** | CKA | _at cierre_ | **D1-1 session on `w3` (in progress).** Stage-2 shape format adopted (`CLAUDE.md`). **1.2:** run 1 with card · **run 2 no card 9:11** (target 10:00, bare `w3`, 1.37.2 held) · **blind break/fix 3:59** (target 4:00; `br_netfilter` line removed + reboot) · recall 1/3 (rows 96–98). Runbook r6: tee pattern, pin + `--allow-downgrades`, cgroup driver from v1.37 docs. **1.3:** stages 1–3 redone on v1.37 + Calico 3.33 — `init` w3, Calico on `172.20.0.0/16`, reset, join to cp1 (aligned to 1.37.1), decommission. Measured: v3.33 operator installs its own CRDs; node `Ready` ~10 min before `calico-node` 1/1; webhook `connection refused` is transient. Card + traps updated. Stage 4 pending. **Lab rebuild running** in a separate session (latest patches, tool parity, new `w3` snapshot `prep137`) | _at cierre_ |
+| **10-31** | CKA | _owed_ | **D1-1 session (laptop, `w3` + cp1).** Stage-2 shape format adopted. **1.2:** run 2 no card **9:11** (target 10:00) · blind break/fix **3:59** (4:00) · recall 1/3 (rows 96–98) · runbook r6. **1.3:** stages 1–4 on v1.37 + Calico 3.33 — join 5:33 ❌ → **2:42 ✅** (+ desktop run ✅) · decommission **3:10 ✅** → join and decommission closed · CNI with a hidden CIDR: config 3:46 but declared done without `tigerastatus` (row 106) · Calico ready only at 16:16 on a 2-CPU node. **1.7:** stages 1–3 + card; sim A coached ×2 on cp1 (cert path typo 10:27 · YAML indent). Measured: v3.33 operator installs its own CRDs; `Ready` = CNI conflist exists; `kubeadm reset` keeps images; cri-dockerd v0.4.10 `.deb` inspected. **Lab rebuilt** (`lab/build/`): `lab-v136` 1.36.6 · `lab-v137` 1.37.2 · `w3.prep137`; new IPs (§8). Next: 1.7 clean blind sim A · cri-dockerd sim (docker.io on `w3`, then restore `prep137`) · §9 Set 2 · R1 Mon 2 Nov (1.2 + CNI with proof) · D1-2 / D1-3 in their own sessions | _owed_ |
 
 **Owed:** hours + confidence for 14–23 Sep and 27 Sep; the 18–23 Sep drill times for
 `cka-D1.md §7`; the 28 Sep – 5 Oct record (what, if anything, was done).
