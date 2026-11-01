@@ -372,6 +372,19 @@ kubelet line.
 - Said `kubeadm token create` needs `sudo`. Measured: it works without it when `~/.kube/config` exists (kubeadm checks `$KUBECONFIG` → `~/.kube/config` → `admin.conf`). Card and trap corrected.
 - During the YAML sim I quoted the kubelet line from my own setup check without saying so.
 
+### Rows 111–118 — 1 Nov, D1-1 1.7 sim A ×3 + §9 Set 2
+
+| # | Source | Error | Correction | Root cause | Note | Fixed |
+|---|---|---|---|---|---|---|
+| 111 | D1-1 1.7 | `crictl logs <id> 2 >&1` (space) → crictl printed its help | `2>&1`, four characters together — second time (row 108) | `LIT` | D1-1 1.7 | ☐ |
+| 112 | D1-1 1.7 | Read the apiserver's `dial tcp 127.0.0.1:2379: connection refused` and did not know where to go | A `refused` points at whoever owns the port: 2379 = etcd → A-F-L on etcd; grep the port on both manifests | `CONF` | D1-1 1.7 | ✅ 1 Nov (port sim solved this way) |
+| 113 | D1-1 1.7 | After fixing etcd, waited ~3 min for the apiserver | CrashLoopBackOff: `sudo systemctl restart kubelet` resets the back-off | `GAP` | D1-1 1.7 | ☐ |
+| 114 | D1-1 1.7 | Took crictl's own errors (`NotFound … container`, `containerd.sock: permission denied`) for the component log | Tool lines: `time=`/`level=`, big PID, local time. Component lines: PID `1`, UTC, `Error:` or JSON | `READ` | D1-1 1.7 | ☐ |
+| 115 | D1-1 1.7 | Three `Permission denied` in one task (`crictl logs`, `cat`, `grep`) | `sudo -i` + `export KUBECONFIG=/etc/kubernetes/admin.conf` at the start of a control-plane task | `PREC` | D1-1 1.7 | ✅ 1 Nov (blind run) |
+| 116 | D1-1 1.7 | Read "authori…" in `Error: unknown flag: --authorisation-mode` and jumped to a permission problem | Read the whole line before acting; name what failed and the literal in one sentence | `READ` | D1-1 1.7 | ☐ |
+| 117 | D1-1 1.2 | Set 2 T1 ~12:00 vs 10:00 — searched the docs for the modules file name | The name is free: any `/etc/modules-load.d/*.conf` (and `/etc/sysctl.d/*.conf`) loads | `SPEED` | D1-1 1.2 | ☐ |
+| 118 | D1-1 1.3 | Set 2 T3: saw `calico-node 0/1` and still declared done (second time, row 106) | Exam move: flag the task, do another, come back for `tigerastatus` | `PREC` | D1-1 1.3 | ☐ |
+
 ### Practice scores — Block 2
 
 | Date | Paper | Score | Time used | Weakest domain |

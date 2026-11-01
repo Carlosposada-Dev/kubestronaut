@@ -341,12 +341,12 @@ Re-run until **Actual ≤ Target twice in a row, without looking.**
 | 6 | Node: drain → delete → re-join with a new token | -2 | cp1 + ssh | 5:00 | **~3:56** (26 Sep, w3: < 3:00 off + 0:56 join) | 31 Oct: join 5:33 ❌ → **2:42 ✅** · off **3:10 ✅** | join ✅ again 31 Oct (desktop lab, learner-reported) | ✅ 31 Oct — join and decommission each twice in a row under target |
 | 7 | Role + RoleBinding for an SA + `auth can-i` proof | -3 | cp1 | 4:00 | | | | |
 | 8 | Install one component with Helm, one with Kustomize | -3 | cp1 | 6:00 | | | | |
-| 9 | Node prep from memory on a fresh VM (§9 Task 1) | -1 | w3 | 10:00 | **9:33** (26 Sep, verify consulted) | **9:11** (31 Oct, no card, bare w3) | | reinstated 23 Sep · blind break/fix 3:59 (target 4:00, 31 Oct) · **R1 Mon 2 Nov closes it** |
+| 9 | Node prep from memory on a fresh VM (§9 Task 1) | -1 | w3 | 10:00 | **9:33** (26 Sep, verify consulted) | **9:11** (31 Oct, no card, bare w3) | | desktop lab ✅ (1 Nov, learner-reported) | ✅ 1 Nov — reinstated 23 Sep · blind break/fix 3:59 (31 Oct) · Set 2 T1 1 Nov: correct, ~12:00 (searched the docs for the modules file name) |
 | 10 | ~~`kubeadm init` a fresh node~~ | -1 | w3 | — | — | — | — | `init` stays 📚 for the exam — now 🧪 setup for row 13 |
 | 11 | Exam mode Set 1 (lifecycle), 3 tasks | -2 | cp1 + ssh | 20:00 | | | | |
-| 12 | Exam mode Set 2 (install/access), 3 tasks | -1/-3 | cp1 + w3 | 20:00 | | | | |
-| 13 | **CNI install** on a no-CNI cluster (§9 sim B) | -1 | w3 | 6:00 | **3:24** (26 Sep, blind) | ☐ stage 4 (31 Oct) | | the task reported since Feb 2025 · 31 Oct: whiteboard redone on v1.37 + Calico 3.33 (untimed) |
-| 14 | **API server down**, diagnosed blind (§9 sim A) | -1 | w3 | 6:00 | untimed, method coached (26 Sep) | 31 Oct on cp1, two families, both coached: cert path typo (Exited) 10:27 · YAML indent (no container) untimed | | folds into D5 5.2 · **clean blind run < 6:00 owed** |
+| 12 | Exam mode Set 2 (install/access), 3 tasks | -1/-3 | cp1 + w3 | 20:00 | **19:52 ✅** (1 Nov: prep ~12:00 · join ~2:14 · CNI config 2:37, proof 7:15 lab-bound) | | | ✅ 1 Nov · a **Set 3** every week from here (plan §6.3) |
+| 13 | **CNI install** on a no-CNI cluster (§9 sim B) | -1 | w3 | 6:00 | **3:24** (26 Sep, blind) | 31 Oct config 3:46, no proof · **1 Nov config 2:37 ✅** (Set 2, hidden CIDR; `tigerastatus` True at 7:15 on a 2-CPU node) | | ✅ 1 Nov | the task reported since Feb 2025 |
+| 14 | **API server down**, diagnosed blind (§9 sim A) | -1 | w3 | 6:00 | untimed, method coached (26 Sep) | 31 Oct on cp1, two families, both coached: cert path typo (Exited) 10:27 · YAML indent (no container) untimed | | 1 Nov: etcd cert path (two layers) 17:01 coached · unknown flag 12:08 coached · **`--etcd-servers` port, blind 5:15 ✅** | ✅ 1 Nov | folds into D5 5.2 — five breaks so far: port, cert path, YAML indent, etcd cert, unknown flag |
 
 ## §8. Objectives scoreboard — D1
 
@@ -355,11 +355,11 @@ A bullet closes when performed **twice in a row under target, without looking**.
 | Bullet | File | Status |
 |---|---|---|
 | 1.1 RBAC | -3 | ☐ |
-| 1.2 Infrastructure | -1 | ◐ A1 9:33 (26 Sep, verify consulted) · A2 9:11 no card + break/fix 3:59 (31 Oct) — **R1 Mon 2 Nov closes it** |
-| 1.3 kubeadm create/manage | -1 | ◐ join 0:56 · decommission < 3:00 · **CNI sim 3:24 blind** (26 Sep) · stages 1–3 redone on v1.37 (31 Oct) · **join ✅✅ · decommission ✅✅ (31 Oct)** · CNI 31 Oct config 3:46 but declared done without `tigerastatus` — **R1 Mon 2 Nov (CNI, with proof) closes it** |
+| 1.2 Infrastructure | -1 | ✅ 1 Nov — 9:11 no card + break/fix 3:59 (31 Oct) · desktop run (1 Nov) · Set 2 T1 correct |
+| 1.3 kubeadm create/manage | -1 | ◐ join 0:56 · decommission < 3:00 · **CNI sim 3:24 blind** (26 Sep) · stages 1–3 redone on v1.37 (31 Oct) · **join ✅✅ · decommission ✅✅ (31 Oct)** · CNI 31 Oct config 3:46 but declared done without `tigerastatus` · **1 Nov Set 2: CNI config 2:37** — ✅ 1 Nov |
 | 1.4 Lifecycle / upgrade | -2 | ◐ upgrade A3 24:00 (keyboard clock never isolated); **1.4b executed and proven 17 Sep, A2 pending** |
 | 1.5 HA control plane | -2 | ✅ read 19 Sep — quorum, topologies, CP-join, multi-member restore recorded |
 | 1.6 Helm & Kustomize | -3 | ☐ |
-| 1.7 Extension interfaces | -1 | ◐ interfaces located on w3 (26 Sep, redone 31 Oct on v1.37) · sim A coached 26 Sep + 31 Oct ×2 (Exited + no-container families) — **a clean blind run < 6:00, then Set 2, closes it** |
+| 1.7 Extension interfaces | -1 | ✅ 1 Nov — interfaces located (31 Oct, v1.37) · sim A coached ×4 (26 Sep, 31 Oct ×2, 1 Nov) · **blind 5:15** (1 Nov) · Set 2 19:52 · cri-dockerd `.deb` read, not simulated |
 | 1.8 CRDs & operators | -3 | ☐ |
-| **Total** | | **0 / 8** |
+| **Total** | | **4 / 8** (1.2 · 1.3 · 1.5 · 1.7) |

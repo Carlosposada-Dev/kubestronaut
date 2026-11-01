@@ -537,6 +537,12 @@ lab) · cri-dockerd v0.4.10 `.deb`: package `cri-dockerd`, units `cri-docker.ser
 | Old `Exited` row next to a `Running` one | History (restart, restore), not a fault — read the newest row |
 | `kube-apiserver.yaml.bak` left in `manifests/` | The kubelet runs every file there — back up outside the directory |
 | `sysctl` → `cannot stat …/nf_conntrack_max` | `nf_conntrack` not loaded — `modprobe` + `modules-load.d` |
+| `crictl logs` → `dial unix /run/containerd/containerd.sock: … permission denied` | crictl's own error, not the component's: no `sudo`. Tool lines carry `time=`/`level=`, a big PID and local time; component lines carry PID `1` and UTC |
+| `crictl logs <id>` → `NotFound … try to find container` | Crash-loop rotated the ID — `crictl logs $(crictl ps -a --name <c> -q \| head -1)` |
+| apiserver `W … dial tcp 127.0.0.1:<port>: connection refused` | The apiserver is the victim of whoever should own that port (2379 = etcd). Grep the port on **both** manifests — the side that does not match is the break; if they match, the other component is down |
+| etcd log is JSON | Look for `"level":"fatal"` and its `"error"` field — same literal rule |
+| Fixed the cause, apiserver still down for minutes | CrashLoopBackOff (10 s → 5 min). `sudo systemctl restart kubelet` resets it |
+| Three `Permission denied` in one task | Start control-plane tasks with `sudo -i` + `export KUBECONFIG=/etc/kubernetes/admin.conf`, `exit` at the end |
 | `journalctl -u kubelet \| grep apiserver \| tail` shows only `Failed deleting a mirror pod … :6443 refused` | Noise: the kubelet cannot reach the dead apiserver. Grep the **file name** (`kube-apiserver.yaml`) to get `Could not process manifest file` |
 | `couldn't parse as pod(yaml: line 41: did not find expected key)`, line 41 looks fine | The parser reports where it got lost — check ±2 lines; almost always indentation (`cat -A` shows tabs) |
 | `crictl logs <id> > 2&1` → a file named `2`, a background job, `1: command not found` | The redirect is `2>&1`, four characters together |
