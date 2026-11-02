@@ -6,7 +6,7 @@ exams: [CKA]
 index: cka-D1.md
 theory: notes_01
 status: drilled (1.4 partial · 1.4b ✅ 17 Sep · §C ✅ 1.4c ✅ 19 Sep · 1.5 read)
-revision: 2026-11-01 (r10 — literals refreshed for the v1.37 exam: upgrade 1.36 → 1.37, etcd 3.6.8 / 3.7.0, `lab-v136` as upgrade base) · 2026-09-26 (r9 — held-package flag REMOVES the hold (measured); one chained re-hold per node) · r8 2026-09-26 ( one drain line; verify v<x.y.z>; targets unified with cka-D1 §7; exam flow without nested ssh) · r7 2026-09-26 ( `apt` not `apt-get`; one parking directory /etc/kubernetes/; worker order per docs + overlap during apply; held-package flag; clean-v134 as upgrade base) · prev r6 2026-09-19
+revision: 2026-11-02 (r11 — upgrade measured on the laptop lab: flag drops only the installed package's hold; `upgrade node` before SUCCESS reads the old config silently; worker overlap boundary; 5 traps from the runs; etcd: wrong-CA `save` hangs, `ETCDCTL_API` warning in 3.7) · 2026-11-01 (r10 — literals refreshed for the v1.37 exam: upgrade 1.36 → 1.37, etcd 3.6.8 / 3.7.0, `lab-v136` as upgrade base) · 2026-09-26 (r9 — held-package flag REMOVES the hold (measured); one chained re-hold per node) · r8 2026-09-26 ( one drain line; verify v<x.y.z>; targets unified with cka-D1 §7; exam flow without nested ssh) · r7 2026-09-26 ( `apt` not `apt-get`; one parking directory /etc/kubernetes/; worker order per docs + overlap during apply; held-package flag; clean-v134 as upgrade base) · prev r6 2026-09-19
 ---
 
 # D1 · Group 2 — Lifecycle (bullets 1.4, 1.5)
@@ -226,9 +226,13 @@ sudo apt install -y --allow-change-held-packages kubelet=$v kubectl=$v && sudo a
 kubectl uncordon cp1      # 'connection refused' right after the restart = API server coming back. Retry
 ```
 
-**`--allow-change-held-packages` installs through the hold — and REMOVES it.**
-Measured 26 Sep: `apt-mark showhold` printed nothing on all three nodes after the
-run. So the hold is re-set **once per node, chained into the kubelet line** (the
+**`--allow-change-held-packages` installs through the hold — and REMOVES it**
+**for the packages it installs.** Measured 26 Sep: `apt-mark showhold` printed
+nothing on all three nodes after the run. Measured 1 Nov: right after the kubeadm
+install, `showhold` printed `cri-tools kubectl kubelet` — only kubeadm had lost
+its hold. Without the flag apt stops at
+`E: Held packages were changed and -y was used without --allow-change-held-packages.`
+So the hold is re-set **once per node, chained into the kubelet line** (the
 last step on every node): `&& sudo apt-mark hold kubeadm kubelet kubectl`. Zero
 extra commands, and `&&` means nothing is frozen if the install fails.
 Why bother: with ~118 packages upgradable, one stray `sudo apt upgrade` moves the
@@ -239,6 +243,19 @@ Kubernetes packages to whatever the repo holds newest.
 **`needrestart` is not your friend.** Ubuntu's `needrestart` restarted the kubelet
 on w2 on 26 Sep even though the typed `systemctlrestart` failed. The exam host may
 not do that. The only proof is `get nodes` showing the new version.
+Measured 2 Nov: `apt install kubelet=…` itself printed
+`Restarting services… systemctl restart kubelet.service` — **installing the
+package already restarts the kubelet**. That is why `drain` goes before the
+`apt install`, not just before the `restart`.
+
+**Lines you will see after the cp1 kubelet restart (measured 1–2 Nov):**
+`get nodes` still shows the **old** version for 10–30 s — the kubelet publishes
+`kubeletVersion` on its next status update; look again. `uncordon` or `get nodes`
+may answer `Forbidden: User "kubernetes-admin" cannot list resource "nodes"` for a
+few seconds while the API server settles — transient, retry, never touch RBAC.
+
+One command per line is fine instead of the `&&` chain: you see which step failed.
+Then `apt-mark hold` is its own line, always right after the install.
 
 #### Phase B — each worker (w1, then w2 — never both at once)
 
@@ -255,9 +272,25 @@ sudo sed -i 's|v1.36|v1.37|' /etc/apt/sources.list.d/kubernetes.list
 sudo apt update && sudo apt install -y --allow-change-held-packages kubeadm=$v
 ```
 ```bash
-# ▶▶ w1 — beat 3: only AFTER cp1's apply has succeeded
-sudo kubeadm upgrade node                       # NOT "upgrade apply"
+# ▶▶ w1 — beat 3: only AFTER cp1's apply has printed SUCCESS
+sudo kubeadm upgrade node                       # NOT "upgrade apply"   ~4 s
 ```
+
+**The overlap boundary, per worker step:**
+
+| Worker step | While `apply` runs | After `SUCCESS`, while cp1 does drain → kubelet → uncordon | After cp1's uncordon |
+|---|---|---|---|
+| repo + `apt update` + kubeadm binary | ✅ | ✅ | ✅ |
+| `upgrade node` | ❌ — reads the `kubelet-config` ConfigMap that `apply` uploads in its **last** lines | ✅ **best moment** | ✅ |
+| drain · kubelet package · uncordon | ❌ — a kubelet may never lead the API server | ⚠️ no — the drain runs through the API server that the cp1 kubelet restart is shaking | ✅ |
+
+Measured 2 Nov: `upgrade node` run 50 s **before** `SUCCESS` did **not** fail — it
+rewrote the kubelet config from the ConfigMap as it stood then. Harmless that day
+only because `kubelet-config` did not change from 1.36 to 1.37. Wait for the line.
+
+Expected output: a `W… configmaps "kube-proxy" is forbidden: User "system:node:w1"`
+warning (a `W` line — not your error), several `Skipping phase. Not a control plane
+node.` and `The kubelet configuration for this node was successfully upgraded!`.
 ```bash
 # ▶▶ cp1 — beat 4
 kubectl drain w1 --ignore-daemonsets --delete-emptydir-data
@@ -319,8 +352,14 @@ parking directory (replaced by `/etc/kubernetes/`), and the `unhold`/`hold` pair
 **Runs:** 17 Sep — sequence from memory, >15:00 wall on cp1 + w1. **26 Sep R1**
 (from `clean-v134` → 1.35.9): **20:00 wall vs 12:00 target**, sequential, before
 r7. **26 Sep R2: 18:00** (3 nodes, held-package flag, old worker order, no
-overlap; holds lost — found after the run). Next run uses the overlap and the held-package flag; time the
-keyboard clock separately.
+overlap; holds lost — found after the run). **1 Nov** coach measurement, no typing,
+cp1 + w1 on the laptop lab: `apt update` 0:47 · kubeadm install 0:28 · `apply`
+**4:42** (image pull ~1:20) · worker overlap 1:25, fully hidden · kubelet line 0:55 ·
+`upgrade node` 0:04 · drain w1 ~0:50 → **~10:05 of machine time**. **2 Nov blind:**
+R2 **17:09** (w3 running its own control plane, host load ~7) · R3 **14:32**
+(w3 stopped, machine ~8 min) — both PASS, both over 12:00. Next: `upgrade node`
+at `SUCCESS`, one drained node at a time, no second `apt update`; re-time on the
+desktop lab.
 
 ### Command card — 1.4 upgrade
 
@@ -330,7 +369,7 @@ REPO      sudo sed -i 's|v1.36|v1.37|' /etc/apt/sources.list.d/kubernetes.list  
 BINARY    sudo apt update && sudo apt install -y --allow-change-held-packages kubeadm=$v
 CP1       sudo kubeadm upgrade apply v<x.y.z> -y      ⏱ → meanwhile REPO+BINARY on w1
           DRAIN cp1 → KUBELET → BACK cp1
-WORKER    sudo kubeadm upgrade node                   (after cp1 succeeded · NOT "apply")
+WORKER    sudo kubeadm upgrade node                   (at cp1's SUCCESS, in T2 · NOT "apply")
 DRAIN     kubectl drain <node> --ignore-daemonsets --delete-emptydir-data  [CP host · same line for every node]
 KUBELET   sudo apt install -y --allow-change-held-packages kubelet=$v kubectl=$v \
             && sudo apt-mark hold kubeadm kubelet kubectl \
@@ -348,9 +387,14 @@ uncordon.
 | Error | Cause |
 |---|---|
 | `apt install kubeadm=v1.37.1` | apt **never** takes a `v`: `1.37.1-1.1`. `kubeadm` **always** does: `v1.37.1`. Read them from `apt-cache madison` and `kubeadm upgrade plan` |
-| `madison` shows no 1.37 | The repo URL carries the minor; bump it first |
+| `madison` shows no 1.37 · `E: Version '1.37.2-1.1' for 'kubeadm' was not found` | The repo URL carries the minor; bump it first |
+| `E: Failed to fetch https://pkgs.k8s.io/core:/stable:/v.1.37/deb/InRelease 403 Forbidden` | Typo in the minor (`v.1.37`). A 403/404 from pkgs.k8s.io = that path does not exist — read the URL in the error, fix with `sed`, `apt update` again |
 | Landed on 1.37.2 when the task said 1.37.1 | No version pinned — apt took the newest in the repo |
-| `kubeadm upgrade node` fails on the worker | Ran before cp1's `apply` finished |
+| `kubeadm upgrade node` "worked", the worker kept the old kubelet config | Ran before cp1's `apply` printed SUCCESS — it does **not** fail, it reads the ConfigMap as it stands |
+| `W… configmaps "kube-proxy" is forbidden: User "system:node:w1"` during `upgrade node` | A warning, not your error — the node identity cannot read that ConfigMap. Wait for `successfully upgraded!` |
+| `Waiting for cache lock: Could not get lock /var/lib/dpkg/lock-frontend … (unattended-upgr)` | Ubuntu's automatic updates hold dpkg (seen after every lab boot). Wait; never kill it or delete the lock |
+| `get nodes` shows the old version right after the kubelet restart | The kubelet has not published its status yet. Look again in 10–30 s |
+| `Forbidden: User "kubernetes-admin" cannot list resource "nodes"` right after the cp1 kubelet restart | Transient while the API server settles. Retry; do not touch RBAC |
 | `E: Held packages were changed` | Held package installed without `--allow-change-held-packages` (or without `unhold`) |
 | `apt-mark showhold` empty after the upgrade | The flag removed the holds. Re-hold in the kubelet line |
 | Node shows the new version though `restart kubelet` failed | Ubuntu's `needrestart` did it for you. Do not rely on it |
@@ -450,14 +494,19 @@ because bash splits words on `=`; type the path or recall the line with ↑.
   (Open experiment: kubeadm's peer cert is signed by the same etcd CA and is
   probably accepted as a client cert. Not a reason to use it.)
 - `/etc/kubernetes/pki/ca.crt` — **no `etcd/`** — is the *Kubernetes* CA. With it
-  `etcdctl` rejects etcd's certificate: `x509: certificate signed by unknown
-  authority`. The failure happens on **your** side.
+  `etcdctl` cannot trust etcd's certificate. **Measured 2 Nov (etcdctl 3.7.0):
+  `snapshot save` prints no error at all — it stops after
+  `"created temporary db file"` and hangs** (killed after 40 min). Same with
+  `http://`. A `save` that has not finished in ~10 s is a TLS mistake: Ctrl+C, check
+  `--cacert` and the endpoint scheme.
 - Certificates are public (644). **Only the key is secret**, so a missing `sudo`
   fails first on `--key`.
 
 `ETCDCTL_API=3`: default since etcd 3.4; API v2 is gone in 3.6. Harmless, costs
 14 characters, protects you against an old binary — keep writing it. With v2
-(etcd ≤ 3.3), `snapshot save` does not exist.
+(etcd ≤ 3.3), `snapshot save` does not exist. **etcdctl 3.7 prints
+`"msg":"unrecognized environment variable","environment-variable":"ETCDCTL_API=3"`**
+as a `warn` line on every call — noise, not an error (measured 2 Nov).
 
 ### 🎯 SAVE + 🔍 VERIFY — the exam task (5 min)
 
@@ -479,6 +528,18 @@ Mnemonic: **where → whom I trust → who I am → what I do.**
 *"Verify the snapshot is valid"* = the `status` table. The file existing is not
 verification.
 
+Measured 2 Nov on `lab-v137` (`save` took 2.5 s, file 26 MB, mode 600 root):
+
+```
+Snapshot saved at /opt/backup/etcd.db
+Server version 3.7.0
+┌──────────┬──────────┬────────────┬────────────┬─────────┐
+│   HASH   │ REVISION │ TOTAL KEYS │ TOTAL SIZE │ VERSION │
+├──────────┼──────────┼────────────┼────────────┼─────────┤
+│ 436e3537 │    11705 │       1569 │      26 MB │   3.7.0 │
+└──────────┴──────────┴────────────┴────────────┴─────────┘
+```
+
 ### 🎯 RESTORE — part A: stop, then restore into a NEW directory
 
 Replacing etcd's data with the control plane running is changing the engine of a
@@ -498,7 +559,12 @@ sudo ls /var/lib/etcd-restore                       # → member
 
 **Why a new directory:** the live data in `/var/lib/etcd` stays intact (your way
 back), and `etcdutl` **refuses** a `--data-dir` that already exists — a second run
-needs a second name.
+needs a second name: `Error: data-dir "/var/lib/etcd-restore" not empty or could
+not be read`.
+
+Measured 2 Nov: `crictl` showed etcd and the apiserver gone **~35 s** after the
+`mv`; the restore itself took **0.6 s** and ends with a `restored snapshot` info line.
+`etcdctl snapshot` in 3.7.0 has **only `save`** — restore is `etcdutl` or nothing.
 
 State after part A: control plane **off** · `/var/lib/etcd` = **current** data
 (the newest, not "old") · `/var/lib/etcd-restore` = **the photo** · etcd does not
@@ -547,23 +613,33 @@ kubectl get <the object the task names>    # the scored proof
 
 In the lab, prove it with two markers: a ConfigMap created **before** the save
 (must survive) and a ConfigMap + Deployment created **after** it (must vanish).
-Within a minute the kubelets also kill the after-snapshot nginx containers — the
+Afterwards the kubelets also kill the after-snapshot nginx containers — the
 API no longer knows them. **etcd decides, the nodes obey.**
+
+Measured 2 Nov: `get nodes` answered **~23 s** after the manifests went back;
+`before-snap` present, `after-snap` and `after-deploy` → `NotFound`. Two things
+the proof does **not** depend on, seen the same day (causes not confirmed):
+`etcd-cp1` still showed `0/1 Pending` 73 s later while the cluster answered
+normally — read the mirror Pod with care (§S); and ~95 s after the restart one
+`after-deploy` nginx container was still in `crictl ps` on each worker — the
+cleanup takes longer than a minute here (r10 said "within a minute"). The scored
+proof is the API object, not the containers.
 
 ### Traps
 
 | Error | Cause |
 |---|---|
 | `after-snap` still there after the restore | The `hostPath` edit was skipped — the restore worked, nobody reads it |
-| `x509: unknown authority` | `pki/ca.crt` instead of `pki/etcd/ca.crt` — Kubernetes CA ≠ etcd CA |
-| connection refused / TLS error | `http://` or port 2380 — clients are **https**, **2379** |
-| `permission denied` | No `sudo`: `server.key` is root-only |
-| `etcdutl` refuses to restore | `--data-dir` already exists — new name every run |
+| `save` stuck after `"created temporary db file"`, no error | TLS mismatch: `pki/ca.crt` instead of `pki/etcd/ca.crt`, or `http://` (measured with etcdctl 3.7.0). Ctrl+C and check |
+| connection refused | Port 2380 or nothing listening — clients are **https**, **2379** |
+| `Error: open /etc/kubernetes/pki/etcd/server.key: permission denied` | No `sudo`: `server.key` is root-only |
+| `Error: could not open /opt/x/etcd.db.part (… no such file or directory)` | The target directory does not exist — `mkdir -p` first |
+| `Error: data-dir "…" not empty or could not be read` | `--data-dir` already exists — new name every run |
 | 404 downloading etcd | Image tag `3.7.0-0` used as the release `v3.7.0` |
 | `no such file or directory` on the manifests | `/etc/kubernetes/manifests/` — `etc` not `etcd`, plural |
 | `get <type>` lists an object that `get <type> <name>` says is NotFound | The API server served its **watch cache**. It never restarted. Restart it, and never restore without stopping the control plane |
-| `unknown command` on `etcdutl status` | The group is `snapshot`: `etcdutl snapshot status` |
-| ⏳ `etcdctl snapshot restore` | Believed removed in etcd 3.6 (only `save` left). Verify with `etcdctl snapshot --help` and record it here |
+| `Error: unknown command "status" for "etcdutl"` | The group is `snapshot`: `etcdutl snapshot status` |
+| `etcdctl snapshot restore` prints the group help | Measured 2 Nov: etcdctl 3.7.0's `snapshot` has **only `save`**. Restore with `etcdutl` |
 
 📚 `kubectl edit` is useless on static Pods: the API shows a read-only **mirror
 pod**, the file is the original — and during a restore the API is down anyway.

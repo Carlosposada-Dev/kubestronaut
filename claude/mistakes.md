@@ -385,6 +385,22 @@ kubelet line.
 | 117 | D1-1 1.2 | Set 2 T1 ~12:00 vs 10:00 — searched the docs for the modules file name | The name is free: any `/etc/modules-load.d/*.conf` (and `/etc/sysctl.d/*.conf`) loads | `SPEED` | D1-1 1.2 | ☐ |
 | 118 | D1-1 1.3 | Set 2 T3: saw `calico-node 0/1` and still declared done (second time, row 106) | Exam move: flag the task, do another, come back for `tigerastatus` | `PREC` | D1-1 1.3 | ☐ |
 
+### Rows 119–124 — 1–2 Nov, D1-2 1.4 upgrade (guided pass + blind runs, laptop lab)
+
+| # | Source | Error | Correction | Root cause | Note | Fixed |
+|---|---|---|---|---|---|---|
+| 119 | D1-2 1.4 | Guided pass: on w1 went from the kubeadm binary straight to `drain` — `kubeadm upgrade node` skipped (caught before the kubelet line) | Worker = R-B-**N**-D-K-U: "Rosa Bebe **Néctar**". No `/etc/kubernetes/tmp/kubeadm-kubelet-config-*` on the worker = N never ran | `PREC` | D1-2 1.4 | ✅ 2 Nov (R2, R3) |
+| 120 | D1-2 1.4 | R1: `sed 's\|v1.36\|v.1.37\|'` → `403 Forbidden` on `…/stable:/v.1.37/deb/InRelease`; 6:32 lost, run aborted | A 403/404 from pkgs.k8s.io = the path does not exist. The URL is printed in the `E:` line — read it character by character, fix with `sed`, `apt update` again. Never restart | `LIT` | D1-2 1.4 | ☐ |
+| 121 | D1-2 1.4 | R1 `history`: `apt install -y --allow-change-held-packages kubeadm` with **no `=$v`** | Without a pin apt installs the newest package in the repo. `=$v` on every install line | `PREC` | D1-2 1.4 | ✅ 2 Nov (R2, R3) |
+| 122 | D1-2 1.4 | R3: `kubeadm upgrade node` on w1 at 11:12:00, before cp1's `apply` printed SUCCESS (~11:12:55) | `upgrade node` does not fail early — it silently reads the `kubelet-config` ConfigMap as it stands. Harmless only because it did not change 1.36 → 1.37. Wait for `SUCCESS`, then N in T2 | `PREC` | D1-2 1.4 | ☐ |
+| 123 | D1-2 1.4 | R3: drained cp1 and w1 back to back, before the cp1 kubelet line | One node drained at a time; the w1 drain runs through the API server that the cp1 kubelet restart shakes. cp1 D-K-U first, then w1 D-K-U | `CONF` | D1-2 1.4 | ☐ |
+| 124 | D1-2 1.4 | Upgrade cp1 + w1: R2 17:09 · R3 14:32 vs 12:00 (laptop lab: machine ~8–10 min) | Overlap R-B on w1 the moment `apply` starts · N at `SUCCESS` · no second `apt update` before the kubelet · no `cat` after the `sed` (the `apt update` line is the proof). Re-time on the desktop lab | `SPEED` | D1-2 1.4 | ☐ |
+
+**Coach errors, 1–2 Nov:**
+- Told the learner to `export KUBECONFIG=/etc/kubernetes/admin.conf` together with `sudo -i`; done as `ubuntu` without `sudo -i` it fails (`admin.conf` is root 600). Caught and undone before use.
+- First `multipass restore` call passed three snapshots in one command (`Too many arguments`); a later restore wrapped in `>/dev/null` silently did nothing. Lab state is now verified before every `go`.
+- Said `upgrade node` before SUCCESS "reads the old config or fails" — measured: it does not fail.
+
 ### Practice scores — Block 2
 
 | Date | Paper | Score | Time used | Weakest domain |

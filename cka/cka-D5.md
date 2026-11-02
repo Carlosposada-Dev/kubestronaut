@@ -138,7 +138,7 @@ with `--containers` and `-A`, and sorting to find the heaviest consumer.
 
 **Trap:** `kubectl top` failing is not a monitoring problem, it is a
 metrics-server problem — and an HPA on CPU depends on the same pipeline
-(cross-reference `cka-D2.md` 2.3).
+(cross-reference `cka-D2-2-scheduling.md` 2.3).
 
 ```
 (your runbook here)

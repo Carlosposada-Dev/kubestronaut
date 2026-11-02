@@ -383,9 +383,11 @@ Build runbook: `lab/lab-kubeadm-3-nodos-tutorial.md`. **Never practise on EKS.**
 |---|---|---|
 | `cka-D1.md` | index: per-host line §0, scaffolding §0.1–0.4, drill table §7, scoreboard §8 | **r11 (26 Sep)** — §8 to be rewritten from the 17 Oct assessment |
 | `cka-D1-1-install.md` | 1.2 · 1.3 · 1.7 | **r5 (26 Sep)** — all three ◐ until re-verified |
-| `cka-D1-2-lifecycle.md` | 1.4 (upgrade, etcd, certs) · 1.4c · 1.5 read | **r7 (26 Sep)** — ◐ until re-verified |
-| `cka-D1-3-access.md` | 1.1 · 1.6 · 1.8 | **in the project since 2 Oct, revision unknown** — learner confirms at the assessment whether it is a skeleton or a worked runbook |
-| `cka-D2.md` … `cka-D5.md` | by official bullet | skeletons (12 Sep) — migrated to Template C the day each is worked |
+| `cka-D1-2-lifecycle.md` | 1.4 (upgrade, etcd, certs) · 1.4c · 1.5 read | **r11 (2 Nov)** — upgrade and etcd re-measured on v1.37; 1.4 ◐ |
+| `cka-D1-3-access.md` | 1.1 · 1.6 · 1.8 | **r3 (2 Nov)** — 1.1 in Template C; 1.6 / 1.8 still r1; audit list under the header |
+| `cka-D2.md` | index: content map, drill table §7, scoreboard §8 | **r2 (2 Nov)** — split like D1 |
+| `cka-D2-1-workloads.md` · `cka-D2-2-scheduling.md` | 2.1 · 2.2 · 2.4 · 2.3 · 2.5 | r1 ✍️ skeletons (text moved unchanged) — migrated to Template C the day each is worked |
+| `cka-D3.md` … `cka-D5.md` | by official bullet | skeletons (12 Sep) — migrated to Template C the day each is worked |
 
 ⚙️ pre-written (commands not guessable) · ✍️ learner writes in the lab · a bullet
 closes when done **twice in a row under target without looking**.
@@ -547,7 +549,7 @@ kubestronaut/
 ├── claude/   session-protocol, mistakes, depth-standard, sources, note-templates, note-prompt-template
 ├── notes/    notes_01–11 (+12–14 only if CKS week happens) — shared by all exams
 ├── kcna/     kcna-curriculum.md                               ✅ closed
-├── cka/      cka-curriculum.md, cka-bashrc.sh, cka-D1 (+ -1/-2/-3), cka-D2…D5
+├── cka/      cka-curriculum.md, cka-bashrc.sh, cka-D1 (+ -1/-2/-3), cka-D2 (+ -1/-2), cka-D3…D5
 ├── ckad/     created Sun 8 Nov
 ├── cks/      created Sun 22 Nov, if at all
 ├── lab/      lab-kubeadm-3-nodos-tutorial.md
@@ -586,6 +588,7 @@ copy wins on conflict.**
 | **10-31** | CKA | ~8 (31 Oct + 1 Nov afternoon, with breaks) | **D1-1 session (laptop, `w3` + cp1).** Stage-2 shape format adopted. **1.2:** run 2 no card **9:11** (target 10:00) · blind break/fix **3:59** (4:00) · recall 1/3 (rows 96–98) · runbook r6. **1.3:** stages 1–4 on v1.37 + Calico 3.33 — join 5:33 ❌ → **2:42 ✅** (+ desktop run ✅) · decommission **3:10 ✅** → join and decommission closed · CNI with a hidden CIDR: config 3:46 but declared done without `tigerastatus` (row 106) · Calico ready only at 16:16 on a 2-CPU node. **1.7:** stages 1–3 + card; sim A coached ×2 on cp1 (cert path typo 10:27 · YAML indent). Measured: v3.33 operator installs its own CRDs; `Ready` = CNI conflist exists; `kubeadm reset` keeps images; cri-dockerd v0.4.10 `.deb` inspected. **Lab rebuilt** (`lab/build/`): `lab-v136` 1.36.6 · `lab-v137` 1.37.2 · `w3.prep137`; new IPs (§8). Next: 1.7 clean blind sim A · cri-dockerd sim (docker.io on `w3`, then restore `prep137`) · §9 Set 2 · R1 Mon 2 Nov (1.2 + CNI with proof) · D1-2 / D1-3 in their own sessions | 3 |
 | **11-01** | lab | — | **Versions re-verified against official sources:** LF pages — CKA **v1.37**, CKAD v1.37, CKS v1.35; `cncf/curriculum` CKA v1.37 PDF (15 Oct) **text identical to v1.35**; newest patches 1.36.6 / 1.37.2 (no 1.38 yet); etcd 3.6.8 / 3.7.0 (kubeadm constants). **Literal refresh done:** `cka-D1-2-lifecycle.md` r10 (drill 1.36.6 → 1.37.1 from `lab-v136`), `cka-D1.md` r13, D2–D5, curriculum. **Desktop lab rebuilt** with `lab/build/` (same versions as the laptop) — 3 runs: acceptance raced DNS, then `tigerastatus` (fast host); fixed with a DNS retry and `kubectl wait … tigerastatus/calico`. `w3` IP no longer hardcoded | — |
 | **11-01** | CKA | (in the 8 above) | **D1-1 closed (1.2 · 1.3 · 1.7 + §9 Set 2).** 1.7 sim A: etcd cert path (two layers, JSON log) 17:01 coached · unknown flag 12:08 coached · **`--etcd-servers` port, blind 5:15 ✅**. **§9 Set 2 19:52 / 20:00 ✅** (prep ~12:00 · join ~2:14 · CNI config 2:37 with a hidden CIDR). 1.2 closed with the desktop run. D1 scoreboard 4 / 8. Lessons: read the whole error line, `sudo -i` on control-plane tasks, restart the kubelet after a CrashLoopBackOff, grep the port on both sides. **Set 3 every week.** Next: D1-2 in its own session (8 pm) | 3 |
+| **11-01 → 02** | CKA | ~3.5 (laptop lab; partial close — session continues on the desktop) | **D1-2 session, 1.4 upgrade.** Stages 1–2 + compressed stage 3 from a coach measurement on `lab-v136` (machine ~10:05 for cp1 + w1, `apply` 4:42) · guided pass cp1 + w1 ✅ (skipped `upgrade node`, caught before the kubelet — row 119). **Blind runs:** R1 aborted 6:32 (`v.1.37` typo → 403, rows 120–121) · **R2 17:09 PASS** (w3 still running its own control plane, host load ~7) · R3 voided (`unattended-upgrades` held the dpkg lock ~5 min after boot) · **R3 14:32 PASS** (w3 stopped, machine ~8 min; `upgrade node` before SUCCESS, two nodes drained together — rows 122–123). Target 12:00 not met (row 124). **1.4b:** stages 1–2; coach measurement on `lab-v137` — wrong-CA `save` **hangs** silently, `etcdctl snapshot` 3.7 has only `save`, stop ~35 s, restore 0.6 s, API back ~23 s. Runbook r11. **Also:** `cka-D1-3-access.md` audited (r3); **D2 split** into index + `-1-workloads` + `-2-scheduling`. Lab: stop `w3` and the apt timers before timed runs; **fix owed in `lab/build/`: disable `apt-daily*` timers in the snapshots**. Next (desktop): upgrade re-time · 1.4b stages 3–4 · §C · 1.4c/1.5 review | _owed_ |
 
 **Owed:** hours + confidence for 14–23 Sep and 27 Sep; the 18–23 Sep drill times for
 `cka-D1.md §7`; the 28 Sep – 5 Oct record (what, if anything, was done).

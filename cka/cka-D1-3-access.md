@@ -6,7 +6,7 @@ exams: [CKA]
 index: cka-D1.md
 theory: notes_07, notes_10, notes_02
 status: 1.1 drilled (A1 ✗ 7:00 · sim 11/11 in 8:00) · 1.6, 1.8 draft
-revision: 2026-09-28 (r2 — 1.1 migrated to Template C from the 27–28 Sep session; editing decision table; §9 RBAC tasks with graders) · prev r1 2026-09-14
+revision: 2026-11-02 (r3 — structure audit against D1-1/D1-2, no content migrated: pending list below the header; stale mistakes-row references and lab date fixed) · 2026-09-28 (r2 — 1.1 migrated to Template C from the 27–28 Sep session; editing decision table; §9 RBAC tasks with graders) · prev r1 2026-09-14
 ---
 
 # D1 · Group 3 — Access & Extend the API (bullets 1.1, 1.6, 1.8)
@@ -16,6 +16,16 @@ revision: 2026-09-28 (r2 — 1.1 migrated to Template C from the 27–28 Sep ses
 >
 > What unites these three: they run **on top of** a working cluster. All of them
 > run on **cp1** and none of them can damage a node.
+>
+> **Structure audit, 2 Nov — still owed before this file matches D1-1 / D1-2**
+> (Template C, done the day each bullet is worked, never in bulk):
+> - **1.1** ✅ shape → whiteboard → card → traps → EKS.
+> - **1.6** r1: commands sit inside `The shape`; no `The whiteboard`, no `Command card`;
+>   traps are a numbered list, not error · cause.
+> - **1.8** r1, ✍️ exercise unfilled: no whiteboard, no card; traps numbered.
+> - **§9** heading does not follow `Set <n> · <k> tasks · <m> min`, and still says it
+>   feeds D1-1 Set 2 (Set 2 ran on 1 Nov without these tasks). Tasks B–D have no
+>   encoded setup or grader.
 
 ## Legend
 🎯 exam path · 🔍 verification · ⏱ fixed machine wait · 📚 study only · 🧪 lab scaffolding
@@ -351,8 +361,9 @@ match them. The CRD alone does nothing — it only creates the vocabulary.
 ### Your task during the lab — start with the operator you already have
 
 You do not need to install a demo operator. **`tigera-operator` and the
-`Installation` CR are a real operator, running in your cluster, that you
-installed yourself on 31 Aug** (see `cka-D1-1-install.md` 1.3).
+`Installation` CR are a real operator, running in your cluster** — installed by
+hand on 31 Aug, and by `lab/build/` since the 31 Oct rebuild (see
+`cka-D1-1-install.md` 1.3).
 
 Build the runbook from it. Find your own commands; the search terms are
 `custom resources` and `kubectl api-resources --help`. It must end up answering:
@@ -457,7 +468,7 @@ write the list to /opt/crds.txt.
 
 | Task | Date | Score | Time | Root cause code |
 |---|---|---|---|---|
-| A | 28 Sep | 11/11 | 8:00 ✗ | `LIT` flags `--verbs`/`--resources` (rows 116–117) |
-| B (lab run 2 `audit`) | 28 Sep | 0 functional | 7:00 ✗ | `PREC` no apply · `CONF` binding NAME · `LIT` (rows 112–115) |
+| A | 28 Sep | 11/11 | 8:00 ✗ | `LIT` flags `--verbs`/`--resources` (28 Sep rows, never copied into `mistakes.md`; numbers 112–117 now belong to D1-1) |
+| B (lab run 2 `audit`) | 28 Sep | 0 functional | 7:00 ✗ | `PREC` no apply · `CONF` binding NAME · `LIT` (same — not in `mistakes.md`) |
 | C | | | | |
 | D | | | | |

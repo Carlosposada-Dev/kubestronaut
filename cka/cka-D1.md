@@ -5,7 +5,7 @@ exams: [CKA]
 theory: notes_01, notes_02, notes_07, notes_10
 k8s_version: v1.37.2 (lab-v137) · upgrade source v1.36.6 (lab-v136)
 lab: 3× multipass VM (cp1, w1, w2) + w3 on the lab host (laptop WSL or desktop — same build, `lab/build/`) · Calico v3.33.0 via tigera-operator
-revision: 2026-11-01 (r13 — §0.4 tools block and §7 row 2 on lab-v137 / lab-v136, etcd 3.7.0 / 3.6.8) · 2026-10-29 (r12 — lab rebuilt for the v1.37 exam: bases lab-v137 / lab-v136, yq on all nodes; §0.3 inventory and restore commands updated) · 2026-09-26 (r11 — §7 rows 9/10 reinstated as w3 sims, rows 13–14 added; §8 1.2/1.3/1.7 on R1; w3.cleanw3 in inventory) · r10 2026-09-26 (snapshot bases lab-v135 / lab-v134) · r9 2026-09-26 ( §0 rewritten from the LF page: per-host line replaces the boot block; lab bashrc mirrors the exam) · prev r7 2026-09-19 (§C/1.4c/1.5 closed) · prev r6 2026-09-17 ( Template C adopted for the content files; snapshot card; restore loop fixed) · prev r4 2026-09-16 · prev r3 2026-09-14 split into index + 3 content files
+revision: 2026-11-02 (r14 — §7 row 2 and §8 1.4 from the 2 Nov blind upgrade runs) · 2026-11-01 (r13 — §0.4 tools block and §7 row 2 on lab-v137 / lab-v136, etcd 3.7.0 / 3.6.8) · 2026-10-29 (r12 — lab rebuilt for the v1.37 exam: bases lab-v137 / lab-v136, yq on all nodes; §0.3 inventory and restore commands updated) · 2026-09-26 (r11 — §7 rows 9/10 reinstated as w3 sims, rows 13–14 added; §8 1.2/1.3/1.7 on R1; w3.cleanw3 in inventory) · r10 2026-09-26 (snapshot bases lab-v135 / lab-v134) · r9 2026-09-26 ( §0 rewritten from the LF page: per-host line replaces the boot block; lab bashrc mirrors the exam) · prev r7 2026-09-19 (§C/1.4c/1.5 closed) · prev r6 2026-09-17 ( Template C adopted for the content files; snapshot card; restore loop fixed) · prev r4 2026-09-16 · prev r3 2026-09-14 split into index + 3 content files
 ---
 
 # D1 — Cluster Architecture, Installation & Configuration (25%)
@@ -334,7 +334,7 @@ Re-run until **Actual ≤ Target twice in a row, without looking.**
 | # | Task | File | Runs on | Target | A1 | A2 | A3 | ✅ |
 |---|---|---|---|---|---|---|---|---|
 | 1 | Per-host line (§0) from memory | — | any host | **0:10** | ☐ | ☐ | | **retargeted 26 Sep**: the 4-line block (A1 1:20 on 19 Sep) retired — `k` + completion are preconfigured in the exam |
-| 2 | `kubeadm upgrade` from `lab-v136` (→ 1.37) | -2 | cp1 + ssh | **cp1 only 8:00 · cp1 + 1 worker 12:00** | 35:00 | 18:00 | 24:00 (3 nodes) | **R1 26 Sep: 20:00** · **R2 26 Sep: 18:00** (3 nodes, flag, old order, no overlap). Next: docs worker order + overlap during `apply` |
+| 2 | `kubeadm upgrade` from `lab-v136` (→ 1.37) | -2 | cp1 + ssh | **cp1 only 8:00 · cp1 + 1 worker 12:00** | 35:00 | 18:00 | 24:00 (3 nodes) | **R1 26 Sep: 20:00** · **R2 26 Sep: 18:00** (3 nodes, flag, old order, no overlap) · **2 Nov blind, v1.36.6 → 1.37.2, laptop lab: 17:09 PASS · 14:32 PASS** (machine ~8–10 min; R1 aborted on a typo, one run voided by `unattended-upgrades`). Next: re-time on the desktop lab, `upgrade node` at SUCCESS |
 | 3 | etcd `snapshot save` + verify | -2 | cp1 | 5:00 | **✅ 17 Sep** | ☐ Fri 18 | | |
 | 4 | etcd restore, cluster back, object present | -2 | cp1 | 10:00 | **✅ 17 Sep** | ☐ Fri 18 | | A1 = rows 3+4 together **< 7:00**, but with the **discarded** in-place variant and warm. A2 must be the **safe path, cold** |
 | 5 | `certs renew all` + restart + refresh kubeconfig | -2 | cp1 | 6:00 | ✅ 19 Sep (untimed, taught) | ☐ timed | | |
@@ -357,7 +357,7 @@ A bullet closes when performed **twice in a row under target, without looking**.
 | 1.1 RBAC | -3 | ☐ |
 | 1.2 Infrastructure | -1 | ✅ 1 Nov — 9:11 no card + break/fix 3:59 (31 Oct) · desktop run (1 Nov) · Set 2 T1 correct |
 | 1.3 kubeadm create/manage | -1 | ◐ join 0:56 · decommission < 3:00 · **CNI sim 3:24 blind** (26 Sep) · stages 1–3 redone on v1.37 (31 Oct) · **join ✅✅ · decommission ✅✅ (31 Oct)** · CNI 31 Oct config 3:46 but declared done without `tigerastatus` · **1 Nov Set 2: CNI config 2:37** — ✅ 1 Nov |
-| 1.4 Lifecycle / upgrade | -2 | ◐ upgrade A3 24:00 (keyboard clock never isolated); **1.4b executed and proven 17 Sep, A2 pending** |
+| 1.4 Lifecycle / upgrade | -2 | ◐ upgrade A3 24:00 (keyboard clock never isolated) · **2 Nov blind 17:09 → 14:32, both correct, over 12:00**; **1.4b executed and proven 17 Sep, A2 pending** (stages 1–2 redone 2 Nov) |
 | 1.5 HA control plane | -2 | ✅ read 19 Sep — quorum, topologies, CP-join, multi-member restore recorded |
 | 1.6 Helm & Kustomize | -3 | ☐ |
 | 1.7 Extension interfaces | -1 | ✅ 1 Nov — interfaces located (31 Oct, v1.37) · sim A coached ×4 (26 Sep, 31 Oct ×2, 1 Nov) · **blind 5:15** (1 Nov) · Set 2 19:52 · cri-dockerd `.deb` read, not simulated |
