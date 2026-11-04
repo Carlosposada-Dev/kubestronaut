@@ -68,7 +68,7 @@ days with zero hours.
 | Exam | Study window | Exam | STATUS |
 |---|---|---|---|
 | KCNA | — | 11 Sep | ✅ **88%** |
-| **CKA** | Sat 17 Oct – Mon 9 Nov | **Tue 10 Nov** (moved 27 Oct; plan B Sun 15 Nov) · killer.sh A1 Thu 5 Nov | ◐ active |
+| **CKA** | Sat 17 Oct – Tue 17 Nov | **Wed 18 Nov** (moved 3 Nov; was Tue 10 Nov) · killer.sh A1 10–12 Nov · A2 ~15–16 Nov | ◐ active |
 | CKAD | Sun 8 Nov – Fri 20 Nov (13 days) | **Sat 21 Nov** | ☐ **book now** (free to move) |
 | CKS | Sun 22 Nov – Sat 28 Nov (7 days) | **Sun 29 Nov** | ☐ **book now**; cancel Sun 22 Nov if the chain broke |
 | Buffer | Sun 22 – Mon 30 Nov | — | absorbs exactly **one** failure (§5) |
@@ -77,24 +77,22 @@ days with zero hours.
 > and §6.2 below still assume Sat 7 Nov — **re-cut owed**. Goal unchanged: CKA + CKAD
 > before 30 Nov, CKS as a free shot.
 
-> **3 Nov — re-cut, PROPOSED by the coach (learner confirms at the start of Wed 4).**
-> **Honest read:** scoreboards at D1 4/8 (1.4 one run from closing) · D2 0/5 · D3 0/6 ·
-> D4 0/3 · D5 0/5 → ~18 of 27 bullets untouched in 5 study days. That only fits if
-> D2–D4 run **card-first** (speed rule, `session-protocol.md` §3): the coach explains
-> only what is unfamiliar, then one timed run. Five stages only where a card does not
-> click. D5 is never cut.
+> **3 Nov — CKA moved to Wed 18 Nov (learner booked it).** Supersedes the 10 Nov dates
+> above and §6.2. Method from 4 Nov: **straight to the stage-3 guided pass, explained as
+> it runs** (stages 1–2 skipped; a 3–4 line mini-shape only for mechanisms that are new
+> at the console — NetworkPolicy, Gateway API). D5 is never cut.
 >
-> | Day | Content |
+> | When | Content |
 > |---|---|
-> | Wed 4 | R1 cold, card closed: etcd save + restore + certs (~20 min) → closes 1.4b/§C · **D2-1**: 2.1 rollouts · 2.2 ConfigMaps/Secrets · 2.4 probes + PDB |
-> | **Thu 5** | **killer.sh A1** (2 h, timed) → root-cause every miss. It ranks D3/D4/D5 by evidence |
-> | Fri 6 | A1 misses redone on the lab · **D3 core**: 3.3 Services/EndpointSlices · 3.2 NetworkPolicy · 3.5 Ingress (3.4 Gateway happy path) |
-> | Sat 7 (W) | **D5** 5.1 node · 5.2 control plane · 5.4 logs · 5.5 Service/network break/fix · **D4** compressed (PV · PVC · StorageClass), 1 h |
-> | Sun 8 (W) | **D2-2** 2.5 scheduling · 2.3 HPA · **D1-3** 1.1 RBAC · 1.6 Helm/Kustomize (card-first) · **killer.sh A2** in the evening → go/no-go (§5 rule: ≥ 60% sit · < 60% move to plan B Sun 15 Nov, before Mon 9 exam-time − 24 h). A2 repeats A1's questions: read its score as optimistic |
-> | Mon 9 | A2 misses only · literals · upgrade re-time on the desktop lab · restore `lab-v137` · no new material |
-> | **Tue 10** | **CKA** |
+> | Wed 4 | Cold R1, card closed: etcd save + restore + certs (~20 min, closes 1.4b / §C) → **D1-3**: 1.1 RBAC · 1.6 Helm/Kustomize · 1.8 CRDs (recognise) |
+> | Thu 5 – Sun 8 | **D2** (5 bullets) → **D3** solid (6) · upgrade re-time on the desktop lab when available |
+> | Mon 9 – Sun 15 | **D4** (3) + **D5** (5) · **killer.sh A1 on 10–12 Nov** → every miss redone |
+> | Mon 16 – Tue 17 | **killer.sh A2** (~15–16, same questions → optimistic) → go/no-go · literals and review only |
+> | **Wed 18** | **CKA** · retake, if needed, ~Wed 25 |
+> | after a pass | **CKAD ~Fri 27** (no retake room before 30 Nov) · **CKS Mon 30** (free shot) |
 >
-> Cut list stands (§4) + 1.5 / 1.8 recognise-only. §6.2 below is history.
+> Pace: ~14 bullets from Wed 4 to Sun 8 (~3/day). Cut list stands (§4) + 1.5 / 1.8
+> recognise-only.
 
 **Why these dates.** Saturday exams: the result (24 h) lands on Sunday, the next
 decision is made before Monday. CKAD reuses ~60% of CKA and is a speed exam →
@@ -608,7 +606,7 @@ copy wins on conflict.**
 | **11-01** | lab | — | **Versions re-verified against official sources:** LF pages — CKA **v1.37**, CKAD v1.37, CKS v1.35; `cncf/curriculum` CKA v1.37 PDF (15 Oct) **text identical to v1.35**; newest patches 1.36.6 / 1.37.2 (no 1.38 yet); etcd 3.6.8 / 3.7.0 (kubeadm constants). **Literal refresh done:** `cka-D1-2-lifecycle.md` r10 (drill 1.36.6 → 1.37.1 from `lab-v136`), `cka-D1.md` r13, D2–D5, curriculum. **Desktop lab rebuilt** with `lab/build/` (same versions as the laptop) — 3 runs: acceptance raced DNS, then `tigerastatus` (fast host); fixed with a DNS retry and `kubectl wait … tigerastatus/calico`. `w3` IP no longer hardcoded | — |
 | **11-01** | CKA | (in the 8 above) | **D1-1 closed (1.2 · 1.3 · 1.7 + §9 Set 2).** 1.7 sim A: etcd cert path (two layers, JSON log) 17:01 coached · unknown flag 12:08 coached · **`--etcd-servers` port, blind 5:15 ✅**. **§9 Set 2 19:52 / 20:00 ✅** (prep ~12:00 · join ~2:14 · CNI config 2:37 with a hidden CIDR). 1.2 closed with the desktop run. D1 scoreboard 4 / 8. Lessons: read the whole error line, `sudo -i` on control-plane tasks, restart the kubelet after a CrashLoopBackOff, grep the port on both sides. **Set 3 every week.** Next: D1-2 in its own session (8 pm) | 3 |
 | **11-01 → 02** | CKA | ~3.5 (laptop lab; partial close — session continues on the desktop) | **D1-2 session, 1.4 upgrade.** Stages 1–2 + compressed stage 3 from a coach measurement on `lab-v136` (machine ~10:05 for cp1 + w1, `apply` 4:42) · guided pass cp1 + w1 ✅ (skipped `upgrade node`, caught before the kubelet — row 119). **Blind runs:** R1 aborted 6:32 (`v.1.37` typo → 403, rows 120–121) · **R2 17:09 PASS** (w3 still running its own control plane, host load ~7) · R3 voided (`unattended-upgrades` held the dpkg lock ~5 min after boot) · **R3 14:32 PASS** (w3 stopped, machine ~8 min; `upgrade node` before SUCCESS, two nodes drained together — rows 122–123). Target 12:00 not met (row 124). **1.4b:** stages 1–2; coach measurement on `lab-v137` — wrong-CA `save` **hangs** silently, `etcdctl snapshot` 3.7 has only `save`, stop ~35 s, restore 0.6 s, API back ~23 s. Runbook r11. **Also:** `cka-D1-3-access.md` audited (r3); **D2 split** into index + `-1-workloads` + `-2-scheduling`. Lab: stop `w3` and the apt timers before timed runs; **fix owed in `lab/build/`: disable `apt-daily*` timers in the snapshots**. Next (desktop): upgrade re-time · 1.4b stages 3–4 · §C · 1.4c/1.5 review | 4 |
-| **11-03** | CKA | ~2.0 (laptop, cp1 + w1 only, w2 off) | **D1-2 close-out: 1.4b + §C.** etcd stage 3 guided pass ✅ (`etcdctl` used for restore → `unknown flag: --data-dir`, row 125) · **blind task A save ~3:31 / 5:00 ✅** (docs example endpoint `10.2.0.9` pasted → hang, Ctrl+C, row 126) · **task B restore 5:59 / 10:00 ✅** (`/var/lib/etcd-from-backup`). §C stages 1–3 (docs `cp -i` swallowed the `chown` → copy not replaced, row 128) · **blind 5:35 / 6:00 ✅**. Measured: no-scheme endpoint + certs works; `grep -n path: /var/lib/etcd` hits only the hostPath line; the API server reloads its serving cert before the restart (restart still required). 1.4c/1.5 recall **1.5/5** (rows 132–134). `\| sudo tee` taught (row 131). Runbook r12. Learner: long commands (etcd flags, upgrade held-package lines) need review; knowing which docs flags to copy matters. **Week re-cut proposed in §3.** Next (Wed 4): R1 etcd + certs cold → D2-1 | 4 |
+| **11-03** | CKA | ~2.0 (laptop, cp1 + w1 only, w2 off) | **D1-2 close-out: 1.4b + §C.** etcd stage 3 guided pass ✅ (`etcdctl` used for restore → `unknown flag: --data-dir`, row 125) · **blind task A save ~3:31 / 5:00 ✅** (docs example endpoint `10.2.0.9` pasted → hang, Ctrl+C, row 126) · **task B restore 5:59 / 10:00 ✅** (`/var/lib/etcd-from-backup`). §C stages 1–3 (docs `cp -i` swallowed the `chown` → copy not replaced, row 128) · **blind 5:35 / 6:00 ✅**. Measured: no-scheme endpoint + certs works; `grep -n path: /var/lib/etcd` hits only the hostPath line; the API server reloads its serving cert before the restart (restart still required). 1.4c/1.5 recall **1.5/5** (rows 132–134). `\| sudo tee` taught (row 131). Runbook r12. Learner: long commands (etcd flags, upgrade held-package lines) need review; knowing which docs flags to copy matters. **CKA moved to Wed 18 Nov; schedule in §3.** Next (Wed 4): R1 etcd + certs cold → D1-3 | 4 |
 
 **Owed:** hours + confidence for 14–23 Sep and 27 Sep; the 18–23 Sep drill times for
 `cka-D1.md §7`; the 28 Sep – 5 Oct record (what, if anything, was done).
