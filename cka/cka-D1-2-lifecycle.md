@@ -5,8 +5,8 @@ bullets: [1.4, 1.5]
 exams: [CKA]
 index: cka-D1.md
 theory: notes_01
-status: drilled (1.4 partial · 1.4b ✅ 17 Sep · §C ✅ 1.4c ✅ 19 Sep · 1.5 read)
-revision: 2026-11-02 (r11 — upgrade measured on the laptop lab: flag drops only the installed package's hold; `upgrade node` before SUCCESS reads the old config silently; worker overlap boundary; 5 traps from the runs; etcd: wrong-CA `save` hangs, `ETCDCTL_API` warning in 3.7) · 2026-11-01 (r10 — literals refreshed for the v1.37 exam: upgrade 1.36 → 1.37, etcd 3.6.8 / 3.7.0, `lab-v136` as upgrade base) · 2026-09-26 (r9 — held-package flag REMOVES the hold (measured); one chained re-hold per node) · r8 2026-09-26 ( one drain line; verify v<x.y.z>; targets unified with cka-D1 §7; exam flow without nested ssh) · r7 2026-09-26 ( `apt` not `apt-get`; one parking directory /etc/kubernetes/; worker order per docs + overlap during apply; held-package flag; clean-v134 as upgrade base) · prev r6 2026-09-19
+status: drilled (1.4 upgrade over target · 1.4b ✅ 3 Nov blind 3:31 / 5:59 · §C ✅ 3 Nov blind 5:35 · 1.4c ✅ · 1.5 read)
+revision: 2026-11-03 (r12 — etcd: drop ETCDCTL_API on 3.6+, docs example endpoint, grep -n finds only the hostPath line; certs: restart reason corrected (apiserver reloads its serving cert), docs `cp -i` trap, 5 traps; `| sudo tee` convention) · 2026-11-02 (r11 — upgrade measured on the laptop lab: flag drops only the installed package's hold; `upgrade node` before SUCCESS reads the old config silently; worker overlap boundary; 5 traps from the runs; etcd: wrong-CA `save` hangs, `ETCDCTL_API` warning in 3.7) · 2026-11-01 (r10 — literals refreshed for the v1.37 exam: upgrade 1.36 → 1.37, etcd 3.6.8 / 3.7.0, `lab-v136` as upgrade base) · 2026-09-26 (r9 — held-package flag REMOVES the hold (measured); one chained re-hold per node) · r8 2026-09-26 ( one drain line; verify v<x.y.z>; targets unified with cka-D1 §7; exam flow without nested ssh) · r7 2026-09-26 ( `apt` not `apt-get`; one parking directory /etc/kubernetes/; worker order per docs + overlap during apply; held-package flag; clean-v134 as upgrade base) · prev r6 2026-09-19
 ---
 
 # D1 · Group 2 — Lifecycle (bullets 1.4, 1.5)
@@ -46,6 +46,7 @@ a file name, a version, a node — is literal. 🎯 blocks show defaults, not or
 | **Always pin the version** (`kubeadm=1.37.2-1.1`) | Without one, apt installs the **newest** package in the repo. That is only correct when the task says "latest"; a task that names `v1.37.1` fails if you land on `.9` |
 | **One parking directory: `/etc/kubernetes/`** | To stop the control plane, move the manifests **one level up**. No `mkdir`, no invented name, and the kubelet watches only `manifests/` itself. Nothing else in `/etc/kubernetes/` ends in `.yaml` |
 | **Chain with `&&`** | Stops at the first failure; `;` marches on and hides it. Same speed |
+| **`> file` → `Permission denied`? Use `\| sudo tee file`** | The redirection is opened by **your** shell, not by `sudo` — `sudo echo x > /opt/f` fails. `cmd \| sudo tee /opt/f` (append: `tee -a`): `tee` is the process that writes, and it runs as root. Try `>` first; switch only on the error |
 | **One `drain` line for every node** | `kubectl drain <node> --ignore-daemonsets --delete-emptydir-data`. The second flag is harmless where there is no `emptyDir`, and fatal to forget where there is one — one variant to memorise, zero to choose |
 
 ### Lab vs exam — how you move between nodes (verified on the LF page, 26 Sep)
@@ -502,18 +503,27 @@ because bash splits words on `=`; type the path or recall the line with ↑.
 - Certificates are public (644). **Only the key is secret**, so a missing `sudo`
   fails first on `--key`.
 
-`ETCDCTL_API=3`: default since etcd 3.4; API v2 is gone in 3.6. Harmless, costs
-14 characters, protects you against an old binary — keep writing it. With v2
-(etcd ≤ 3.3), `snapshot save` does not exist. **etcdctl 3.7 prints
-`"msg":"unrecognized environment variable","environment-variable":"ETCDCTL_API=3"`**
-as a `warn` line on every call — noise, not an error (measured 2 Nov).
+`ETCDCTL_API=3`: default since etcd 3.4; API v2 is gone in 3.6. **Do not type it on
+a 3.6+ binary** (changed 3 Nov, was "keep writing it"): etcdctl 3.7 prints
+`"msg":"unrecognized environment variable","environment-variable":"ETCDCTL_API=3"`
+as a `warn` line on every call — noise in an output you must read. `etcdctl version`
+→ `API version: 3.7` answers it in 2 s. Only an etcdctl ≤ 3.3 (no `snapshot` at all)
+needs it.
+
+**Copying from the docs** (`operating etcd clusters for Kubernetes` → *Securing
+communication*): its example already carries the kubeadm cert paths
+(`/etc/kubernetes/pki/etcd/server.crt`, `server.key`, `ca.crt`) — copy the flags,
+then **replace its endpoint `10.2.0.9:2379` with the task's** and `member list` with
+`snapshot save <file>`. Measured 3 Nov: pasted unchanged, `save` hung. Also
+measured: `--endpoints 127.0.0.1:2379` **without** `https://`, with the three cert
+flags, works — still, type the URL as the task gives it.
 
 ### 🎯 SAVE + 🔍 VERIFY — the exam task (5 min)
 
 ```bash
 # ▶▶ cp1
 sudo mkdir -p /opt/backup
-sudo ETCDCTL_API=3 etcdctl \
+sudo etcdctl \
   --endpoints=https://127.0.0.1:2379 \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
@@ -603,6 +613,12 @@ sudo crictl ps | grep -E 'etcd|kube-apiserver'      # etcd first, then apiserver
 
 Why not `sed`: an unscoped `s|/var/lib/etcd|…|` rewrites all three.
 
+**Fastest way to the right line (measured 3 Nov):**
+`sudo grep -n 'path: /var/lib/etcd' /etc/kubernetes/etcd.yaml` prints **only** the
+`hostPath` line (`91:      path: /var/lib/etcd`) — `mountPath` has a capital `P`
+and grep is case-sensitive — then `sudo vim +91 /etc/kubernetes/etcd.yaml` → `A`.
+Searching `/hostPath` in vim lands first on the **`etcd-certs`** volume; press `n`.
+
 ### 🔍 PROVE
 
 ```bash
@@ -647,7 +663,7 @@ pod**, the file is the original — and during a restore the API is down anyway.
 ### Command card — 1.4b etcd save / restore
 
 ```
-SAVE      sudo ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 \
+SAVE      sudo etcdctl --endpoints=https://127.0.0.1:2379 \
             --cacert=/etc/kubernetes/pki/etcd/ca.crt \
             --cert=/etc/kubernetes/pki/etcd/server.crt \
             --key=/etc/kubernetes/pki/etcd/server.key \
@@ -684,7 +700,7 @@ DaemonSets.
 |---|---|---|
 | 1 | `certs check-expiration` | See what expires and when — also the answer to "which ones?" |
 | 2 | `certs renew all` | Replaces the **leaves**; the CAs are untouched |
-| 3 | Restart the control plane (§S manoeuvre) | Static Pods hold the old certs **in memory** |
+| 3 | Restart the control plane (§S manoeuvre) | Not every component reloads its certs from disk (docs: *"dynamic certificate reload is currently not supported for all components"*); `renew all` itself ends with `You must restart the kube-apiserver, kube-controller-manager, kube-scheduler and etcd` |
 | 4 | Re-copy `admin.conf` to `~/.kube/config` | Your kubeconfig is a **copy**, and it is now stale |
 | 5 | `check-expiration` again + `get nodes` | Proves both ends: renewed, and you can still connect |
 
@@ -706,7 +722,22 @@ sudo chown $(id -u):$(id -g) ~/.kube/config
 ```
 
 **Verify:** `sudo kubeadm certs check-expiration` → every leaf ~364 days ·
-`kubectl get nodes` still works.
+`ls -l ~/.kube/config` → **today's date**, owner `ubuntu` · `kubectl get nodes` works.
+`get nodes` alone does **not** prove the re-copy: the old copy keeps working (same CA)
+until it expires.
+
+**Measured 3 Nov (`lab-v137`):** `renew all` 1.6 s, 11 `… renewed` lines + the
+"You must restart …" line · the four control-plane containers gone ~36 s after the
+`mv`, `kubectl` back 8 s after the return · the API server **already served the new
+serving cert before the restart** (`openssl s_client` → new `notAfter`) — it reloads
+that one; the rest is why the restart stays. The lab's own `~/.kube/config` had
+already diverged from `admin.conf` (22:19 vs 22:26, the upgrade from 1.36 renewed
+`admin.conf`).
+
+**Copying from the docs** (*Copying the administrator certificate*): the page writes
+`sudo cp -i …`. **Drop the `-i`.** It asks `cp: overwrite …?`; pasted together with the
+`chown` line, the `chown` line is swallowed as the answer, nothing is copied, nothing
+fails, and `get nodes` still works (measured 3 Nov).
 
 ### Command card — §C certificates
 
@@ -753,7 +784,12 @@ connect.
 
 | Error | Cause |
 |---|---|
-| `check-expiration` says 364d but `kubectl` still fails | The control plane was not restarted — the old certs are in memory |
+| `error: unknown command "check" for "kubeadm certs"` | It is `check-expiration`, one hyphenated word |
+| `error: failed to load kubeConfig file /etc/kubernetes/admin.conf: permission denied` | `kubeadm certs …` without `sudo` |
+| `mv: cannot stat '/etc/kubernetes/*.yaml'` when parking | Wrong direction: parking moves **out of** `manifests/` (`manifests/*.yaml` → `/etc/kubernetes/`); returning moves **into** it |
+| `cp: overwrite '/home/ubuntu/.kube/config'?` | `cp -i` copied from the docs — drop `-i`; `ls -l ~/.kube/config` shows whether the copy happened |
+| `error loading config file "…": open …: permission denied` | `sudo cp` without the `chown` — the file is root's |
+| `check-expiration` says 364d but a component still fails TLS | The control plane was not restarted — not every component reloads its certs |
 | `renew` changed only one line | `renew <name>` is selective; the task asked for `renew all` |
 | Locked out right after renewing | `~/.kube/config` is a **copy**; re-copy `admin.conf` |
 | `permission denied` reading the kubeconfig | Missing `chown` after `sudo cp` |

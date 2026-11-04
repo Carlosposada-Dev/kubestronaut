@@ -401,6 +401,26 @@ kubelet line.
 - First `multipass restore` call passed three snapshots in one command (`Too many arguments`); a later restore wrapped in `>/dev/null` silently did nothing. Lab state is now verified before every `go`.
 - Said `upgrade node` before SUCCESS "reads the old config or fails" — measured: it does not fail.
 
+### Rows 125–134 — 3 Nov, D1-2 1.4b etcd + §C certificates (guided passes + blind runs) + 1.4c/1.5 recall
+
+| # | Source | Error | Correction | Root cause | Note | Fixed |
+|---|---|---|---|---|---|---|
+| 125 | D1-2 1.4b | Guided pass: `sudo etcdctl snapshot restore … --data-dir=…` → `Error: unknown flag: --data-dir` | `Available Commands:` listing only `save` = wrong tool. *ctl* = network client = `save` · *utl* = offline utility = `status` + `restore` | `CONF` | D1-2 1.4b | ✅ 3 Nov (task B) |
+| 126 | D1-2 1.4b | Task A: pasted the docs example (*Securing communication*) with its `--endpoints 10.2.0.9:2379` → `save` hung after `created temporary db file`; ~1 min, Ctrl+C on own | Copy the docs block for its cert paths, then replace every example value (endpoint, command, output path) with the task's literals | `LIT` | D1-2 1.4b | ☐ |
+| 127 | D1-2 1.4b | Recall: could not say why the restore changes `hostPath` and not `--data-dir` | `--data-dir` and `mountPath` are paths **inside** the container; only `hostPath` picks the node directory mounted there. Changing `--data-dir` alone points etcd at an unmounted, empty path (deduced, not measured) | `GAP` | D1-2 1.4b | ☐ |
+| 128 | D1-2 §C | Guided pass: pasted the docs' `sudo cp -i admin.conf ~/.kube/config` + `chown` together → the `chown` line answered `overwrite?`, nothing copied, `get nodes` still worked | Drop `-i`; one line at a time; prove the re-copy with `ls -l ~/.kube/config` (today's date, owner ubuntu), never with `get nodes` | `LIT` | D1-2 §C | ✅ 3 Nov (blind run) |
+| 129 | D1-2 §C | Blind run: `kubeadm certs check expiration` → `unknown command "check"` | `check-expiration`, one hyphenated word | `LIT` | D1-2 §C | ☐ |
+| 130 | D1-2 §C | Blind run: parked with `mv /etc/kubernetes/*.yaml /etc/kubernetes/` ×2 and `manifest/` singular → `cannot stat` | Parking = **out of** `manifests/*.yaml` into `/etc/kubernetes/`; returning = into `manifests/`. Plural | `LIT` | D1-2 §C | ☐ |
+| 131 | D1-2 §C | Did not know how to write to `/opt` (root-owned) — proposed `sudo cmd > /opt/f` | The redirection is opened by the user's shell, before `sudo`. `cmd \| sudo tee /opt/f` (append `-a`). Try `>` first, switch on `Permission denied` | `GAP` | D1-2 §C | ✅ 3 Nov (used unprompted in the blind run) |
+| 132 | D1-2 1.4c | Recall: blamed `ROLES <none>` after a re-join on a bad reset | The role is a label on the Node object, which `delete node` removed: `kubectl label node <n> node-role.kubernetes.io/worker=`. A bad reset breaks the join itself | `GAP` | D1-2 1.4c | ☐ |
+| 133 | D1-2 1.5 | Recall: "4 etcd members tolerate 2" (quorum 3 stated correctly) | Tolerates = n − quorum = 4 − 3 = **1**, same as 3 members. Even numbers buy nothing; 5 tolerates 2 | `CONF` | D1-2 1.5 | ☐ |
+| 134 | D1-2 1.5 | Recall: CP-join flags unknown — answered with the worker re-join cleanup (reset + `/etc/cni/net.d`) | A second control-plane node = worker join + `--control-plane --certificate-key <key>`; the key lives 2 h (`kubeadm init phase upload-certs --upload-certs` makes a new one) | `GAP` | D1-2 1.5 | ☐ |
+
+**Coach errors, 3 Nov:**
+- Said `grep 'path: /var/lib/etcd'` would also match the `mountPath` line — `mountPath` has a capital `P`; it matches only the `hostPath` line (learner's output).
+- Stage-2 shape said that without a restart "the API server keeps serving the old certificate" — measured: the API server reloads its serving cert from disk; the restart is still required for the other components (docs + `renew all` output).
+- Added an unplanned literal sub-task (write the expiry date to `/opt/…`) to the §C timed task, then had to teach `\| sudo tee` before the clock and finally drop it. New literals belong in the setup, decided before the brief.
+
 ### Practice scores — Block 2
 
 | Date | Paper | Score | Time used | Weakest domain |
