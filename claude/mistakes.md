@@ -421,6 +421,13 @@ kubelet line.
 - Stage-2 shape said that without a restart "the API server keeps serving the old certificate" — measured: the API server reloads its serving cert from disk; the restart is still required for the other components (docs + `renew all` output).
 - Added an unplanned literal sub-task (write the expiry date to `/opt/…`) to the §C timed task, then had to teach `\| sudo tee` before the clock and finally drop it. New literals belong in the setup, decided before the brief.
 
+### Rows 135–136 — 4 Nov, D1-2 cold validation (etcd save + restore, certs)
+
+| # | Source | Error | Correction | Root cause | Note | Fixed |
+|---|---|---|---|---|---|---|
+| 135 | D1-2 1.4b | Restore 4:11 ✅, but `done` declared after a `crictl ps` — no object checked (third time: rows 106, 118) | `crictl` proves containers run, not that etcd reads the snapshot; a skipped `hostPath` edit looks identical there. The last line before `done` is always `kubectl get <the object>` | `PREC` | D1-2 1.4b | ☐ |
+| 136 | D1-2 §C | Certs 5:06 ✅, restart check `grep -E 'etcd\|kubeapiserver\|…'` (no hyphen) — blind to the API server, the one that exits ~25 s last | Count to **four** in the `crictl` list; three means the pattern is wrong. `kube-apiserver` | `LIT` | D1-2 §C | ☐ |
+
 ### Practice scores — Block 2
 
 | Date | Paper | Score | Time used | Weakest domain |

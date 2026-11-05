@@ -5,8 +5,8 @@ bullets: [1.4, 1.5]
 exams: [CKA]
 index: cka-D1.md
 theory: notes_01
-status: drilled (1.4 upgrade over target · 1.4b ✅ 3 Nov blind 3:31 / 5:59 · §C ✅ 3 Nov blind 5:35 · 1.4c ✅ · 1.5 read)
-revision: 2026-11-03 (r12 — etcd: drop ETCDCTL_API on 3.6+, docs example endpoint, grep -n finds only the hostPath line; certs: restart reason corrected (apiserver reloads its serving cert), docs `cp -i` trap, 5 traps; `| sudo tee` convention) · 2026-11-02 (r11 — upgrade measured on the laptop lab: flag drops only the installed package's hold; `upgrade node` before SUCCESS reads the old config silently; worker overlap boundary; 5 traps from the runs; etcd: wrong-CA `save` hangs, `ETCDCTL_API` warning in 3.7) · 2026-11-01 (r10 — literals refreshed for the v1.37 exam: upgrade 1.36 → 1.37, etcd 3.6.8 / 3.7.0, `lab-v136` as upgrade base) · 2026-09-26 (r9 — held-package flag REMOVES the hold (measured); one chained re-hold per node) · r8 2026-09-26 ( one drain line; verify v<x.y.z>; targets unified with cka-D1 §7; exam flow without nested ssh) · r7 2026-09-26 ( `apt` not `apt-get`; one parking directory /etc/kubernetes/; worker order per docs + overlap during apply; held-package flag; clean-v134 as upgrade base) · prev r6 2026-09-19
+status: drilled (1.4 upgrade over target — the only open item · 1.4b ✅✅ 3–4 Nov · §C ✅✅ 3–4 Nov · 1.4c ✅ · 1.5 read)
+revision: 2026-11-04 (r13 — 1.4c sequence without a separate cordon; cordon/uncordon shown as their own verbs) · 2026-11-03 (r12 — etcd: drop ETCDCTL_API on 3.6+, docs example endpoint, grep -n finds only the hostPath line; certs: restart reason corrected (apiserver reloads its serving cert), docs `cp -i` trap, 5 traps; `| sudo tee` convention) · 2026-11-02 (r11 — upgrade measured on the laptop lab: flag drops only the installed package's hold; `upgrade node` before SUCCESS reads the old config silently; worker overlap boundary; 5 traps from the runs; etcd: wrong-CA `save` hangs, `ETCDCTL_API` warning in 3.7) · 2026-11-01 (r10 — literals refreshed for the v1.37 exam: upgrade 1.36 → 1.37, etcd 3.6.8 / 3.7.0, `lab-v136` as upgrade base) · 2026-09-26 (r9 — held-package flag REMOVES the hold (measured); one chained re-hold per node) · r8 2026-09-26 ( one drain line; verify v<x.y.z>; targets unified with cka-D1 §7; exam flow without nested ssh) · r7 2026-09-26 ( `apt` not `apt-get`; one parking directory /etc/kubernetes/; worker order per docs + overlap during apply; held-package flag; clean-v134 as upgrade base) · prev r6 2026-09-19
 ---
 
 # D1 · Group 2 — Lifecycle (bullets 1.4, 1.5)
@@ -830,13 +830,16 @@ thing resembling this is the kubelet cert on your nodes, which rotates itself.
 | 6 | Verify `Ready`, not `SchedulingDisabled` | A node that returns cordoned is a silent half-failure |
 
 ```bash
-# ▶▶ cp1 — imperative, all of it
-kubectl cordon w2                                            # mark unschedulable, evict nothing
+# ▶▶ cp1 — the decommission sequence (no separate cordon: drain already cordons)
 kubectl drain w2 --ignore-daemonsets --delete-emptydir-data  # cordon + evict
-kubectl uncordon w2
 kubectl delete node w2                                       # removes the OBJECT only
 kubeadm token create --print-join-command                    # mint a new join command
 ```
+
+📚 The other two node verbs, **not** steps of this sequence: `kubectl cordon <node>`
+= only "no new Pods", evicts nothing (a task that says *cordon* means exactly this) ·
+`kubectl uncordon <node>` = the end of a **maintenance** (drain → work → uncordon),
+never before a `delete node`.
 ```bash
 # ▶▶ w2 — the machine must be cleaned before it can re-join
 sudo kubeadm reset -f
