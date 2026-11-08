@@ -334,13 +334,13 @@ Re-run until **Actual ≤ Target twice in a row, without looking.**
 | # | Task | File | Runs on | Target | A1 | A2 | A3 | ✅ |
 |---|---|---|---|---|---|---|---|---|
 | 1 | Per-host line (§0) from memory | — | any host | **0:10** | ☐ | ☐ | | **retargeted 26 Sep**: the 4-line block (A1 1:20 on 19 Sep) retired — `k` + completion are preconfigured in the exam |
-| 2 | `kubeadm upgrade` from `lab-v136` (→ 1.37) | -2 | cp1 + ssh | **cp1 only 8:00 · cp1 + 1 worker 12:00** | 35:00 | 18:00 | 24:00 (3 nodes) | **R1 26 Sep: 20:00** · **R2 26 Sep: 18:00** (3 nodes, flag, old order, no overlap) · **2 Nov blind, v1.36.6 → 1.37.2, laptop lab: 17:09 PASS · 14:32 PASS** (machine ~8–10 min; R1 aborted on a typo, one run voided by `unattended-upgrades`). Next: re-time on the desktop lab, `upgrade node` at SUCCESS |
+| 2 | `kubeadm upgrade` from `lab-v136` (→ 1.37) | -2 | cp1 + ssh | **cp1 only 8:00 · cp1 + 1 worker 12:00** | 35:00 | 18:00 | 24:00 (3 nodes) | **R1 26 Sep: 20:00** · **R2 26 Sep: 18:00** (3 nodes, flag, old order, no overlap) · **2 Nov blind, v1.36.6 → 1.37.2, laptop lab: 17:09 PASS · 14:32 PASS** (machine ~8–10 min; R1 aborted on a typo, one run voided by `unattended-upgrades`) · **desktop lab, learner-reported (≤ 8 Nov): 12:54 · 12:43**, both correct, ~45 s over; the wait is `upgrade apply`, R-B on w1 already overlapped. ✅ **Closed 8 Nov by learner decision** (over target by < 1 min, machine-bound) |
 | 3 | etcd `snapshot save` + verify | -2 | cp1 | 5:00 | **✅ 17 Sep** | **~3:31 ✅** (3 Nov, blind, cold, `/srv/data/…`, no cert paths given; ~1 min lost on the docs example endpoint) | **3:11 ✅** (4 Nov, cold, `/var/lib/backup/…`) | ✅ 4 Nov — twice in a row under target, safe path |
 | 4 | etcd restore, cluster back, object present | -2 | cp1 | 10:00 | **✅ 17 Sep** | **5:59 ✅** (3 Nov, blind, safe path, `--data-dir /var/lib/etcd-from-backup`) | **4:11 ✅** (4 Nov, cold, `/var/lib/etcd-new`; declared done on `crictl`, row 135) | ✅ 4 Nov — twice in a row under target, safe path |
 | 5 | `certs renew all` + restart + refresh kubeconfig | -2 | cp1 | 6:00 | ✅ 19 Sep (untimed, taught) | **5:35 ✅** (3 Nov, blind; 4 control-plane containers new, kubeconfig cert = `admin.conf` cert) | **5:06 ✅** (4 Nov, cold; `kubeapiserver` typo in the restart grep, row 136) | ✅ 4 Nov — twice in a row under target |
 | 6 | Node: drain → delete → re-join with a new token | -2 | cp1 + ssh | 5:00 | **~3:56** (26 Sep, w3: < 3:00 off + 0:56 join) | 31 Oct: join 5:33 ❌ → **2:42 ✅** · off **3:10 ✅** | join ✅ again 31 Oct (desktop lab, learner-reported) | ✅ 31 Oct — join and decommission each twice in a row under target |
-| 7 | Role + RoleBinding for an SA + `auth can-i` proof | -3 | cp1 | 4:00 | | | | |
-| 8 | Install one component with Helm, one with Kustomize | -3 | cp1 | 6:00 | | | | |
+| 7 | Role + RoleBinding for an SA + `auth can-i` proof | -3 | cp1 | 4:00 | **12:25** ✗ (5 Nov R1 `finance`, 9/10: `ConfigMaps` typed in vim) | **5:35** ✗ (5 Nov R2 `billing`, 11/11, two-rule method) | 7 Nov: R3′ 6:08 (11/12) · R4 4:34 (9/11) · R5 **3:37** (9/11) · R6 **4:14 (11/11)** | ✅ **8 Nov cold: 3:46 (`sales`, CronJobs + Secrets, 11/11) · 3:24 (`marketing`, StatefulSets + `statefulsets/scale`, 11/11)** — twice in a row under target, one `can-i` per rule |
+| 8 | Install one component with Helm, one with Kustomize | -3 | cp1 | 6:00 | | | | guided pass 5–8 Nov. **H1 8 Nov:** blind 15:37 (7/11) → variables 10:59 (11/11) → **6:32 (11/11)** · micro-drills M1–M5 all correct (M1 1:16 · M2 1:07 · M3 4:13 · M4 1:23 · M5 2:05). Next: H1 **cold**, twice ≤ 6:00 |
 | 9 | Node prep from memory on a fresh VM (§9 Task 1) | -1 | w3 | 10:00 | **9:33** (26 Sep, verify consulted) | **9:11** (31 Oct, no card, bare w3) | | desktop lab ✅ (1 Nov, learner-reported) | ✅ 1 Nov — reinstated 23 Sep · blind break/fix 3:59 (31 Oct) · Set 2 T1 1 Nov: correct, ~12:00 (searched the docs for the modules file name) |
 | 10 | ~~`kubeadm init` a fresh node~~ | -1 | w3 | — | — | — | — | `init` stays 📚 for the exam — now 🧪 setup for row 13 |
 | 11 | Exam mode Set 1 (lifecycle), 3 tasks | -2 | cp1 + ssh | 20:00 | | | | |
@@ -354,12 +354,12 @@ A bullet closes when performed **twice in a row under target, without looking**.
 
 | Bullet | File | Status |
 |---|---|---|
-| 1.1 RBAC | -3 | ☐ |
+| 1.1 RBAC | -3 | ✅ 8 Nov — cold 3:46 + 3:24, both 11/11 (after R1–R6 on 5–7 Nov: 12:25 → 4:14) |
 | 1.2 Infrastructure | -1 | ✅ 1 Nov — 9:11 no card + break/fix 3:59 (31 Oct) · desktop run (1 Nov) · Set 2 T1 correct |
 | 1.3 kubeadm create/manage | -1 | ◐ join 0:56 · decommission < 3:00 · **CNI sim 3:24 blind** (26 Sep) · stages 1–3 redone on v1.37 (31 Oct) · **join ✅✅ · decommission ✅✅ (31 Oct)** · CNI 31 Oct config 3:46 but declared done without `tigerastatus` · **1 Nov Set 2: CNI config 2:37** — ✅ 1 Nov |
-| 1.4 Lifecycle / upgrade | -2 | ◐ upgrade A3 24:00 (keyboard clock never isolated) · **2 Nov blind 17:09 → 14:32, both correct, over 12:00** · **1.4b etcd ✅✅ · §C certs ✅✅ (3–4 Nov)** · 1.4c ✅ (31 Oct) — **only the upgrade keeps 1.4 open** (re-time on the desktop lab) |
+| 1.4 Lifecycle / upgrade | -2 | ◐ upgrade A3 24:00 (keyboard clock never isolated) · **2 Nov blind 17:09 → 14:32, both correct, over 12:00** · **1.4b etcd ✅✅ · §C certs ✅✅ (3–4 Nov)** · 1.4c ✅ (31 Oct) · **desktop upgrade 12:54 · 12:43** (learner-reported) → ✅ **8 Nov, closed by learner decision** (< 1 min over 12:00, machine-bound) |
 | 1.5 HA control plane | -2 | ✅ read 19 Sep — quorum, topologies, CP-join, multi-member restore recorded |
-| 1.6 Helm & Kustomize | -3 | ☐ |
+| 1.6 Helm & Kustomize | -3 | ◐ guided pass 5–8 Nov · H1 6:32 11/11 (32 s over) · micro-drills 5/5 correct — **H1 cold ×2 ≤ 6:00 closes it** |
 | 1.7 Extension interfaces | -1 | ✅ 1 Nov — interfaces located (31 Oct, v1.37) · sim A coached ×4 (26 Sep, 31 Oct ×2, 1 Nov) · **blind 5:15** (1 Nov) · Set 2 19:52 · cri-dockerd `.deb` read, not simulated |
-| 1.8 CRDs & operators | -3 | ☐ |
-| **Total** | | **4 / 8** (1.2 · 1.3 · 1.5 · 1.7) |
+| 1.8 CRDs & operators | -3 | ✅ 8 Nov — recognise-only (plan §3): list · scope · explain · operator · CR vs CRD delete measured; Task D 0:41, 3/3 |
+| **Total** | | **7 / 8** (1.1 · 1.2 · 1.3 · 1.4 · 1.5 · 1.7 · 1.8) — 1.6 open on H1 cold |

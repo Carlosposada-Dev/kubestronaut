@@ -428,6 +428,57 @@ kubelet line.
 | 135 | D1-2 1.4b | Restore 4:11 ✅, but `done` declared after a `crictl ps` — no object checked (third time: rows 106, 118) | `crictl` proves containers run, not that etcd reads the snapshot; a skipped `hostPath` edit looks identical there. The last line before `done` is always `kubectl get <the object>` | `PREC` | D1-2 1.4b | ☐ |
 | 136 | D1-2 §C | Certs 5:06 ✅, restart check `grep -E 'etcd\|kubeapiserver\|…'` (no hyphen) — blind to the API server, the one that exits ~25 s last | Count to **four** in the `crictl` list; three means the pattern is wrong. `kube-apiserver` | `LIT` | D1-2 §C | ☐ |
 
+### Rows 137–147 — 4–5 Nov, D1-3 1.1 RBAC (guided pass + blind R1/R2)
+
+| # | Source | Error | Correction | Root cause | Note | Fixed |
+|---|---|---|---|---|---|---|
+| 137 | D1-3 1.1 | Guided: `--role=pod-reader` + Tab completed to the file `pod-reader-role.yaml` → binding `created`, `Role/pod-reader-role.yaml`, grants nothing | After `=` bash completes file names. Type role names in full; read `ROLE` in `get rolebinding -o wide` — a `.yaml` there is this error | `LIT` | D1-3 1.1 | ✅ 5 Nov (R1, R2) |
+| 138 | D1-3 1.1 | Guided: `k replace --froce` → `unknown flag` | `--force`. Seen and fixed on the spot | `LIT` | D1-3 1.1 | ✅ 4 Nov |
+| 139 | D1-3 1.1 | Guided: `--as=system:serviceaccounts:rbac-lab:default` (plural) → bare `no`, no error | One SA = singular username, 4 parts (`--as=`); every SA of a namespace = plural group, 3 parts (`--group=`). A wrong `--as` impersonates a User nobody bound | `CONF` | D1-3 1.1 | ✅ 5 Nov (R1, R2) |
+| 140 | D1-3 1.1 | Guided: `can-i … -n deafult` → `no`, read as proof | A `no` proves nothing if a literal in the question is wrong (that namespace does not exist) | `LIT` | D1-3 1.1 | ☐ |
+| 141 | D1-3 1.1 | Guided: `k apply -f pod.yaml` before adding `serviceAccountName` in vim → Pod ran as `default` | Caught by the jsonpath proof; fixed with `replace --force`. The proof line worked | `PREC` | D1-3 1.1 | ✅ 4 Nov (caught by own proof) |
+| 142 | D1-3 1.1 | R1: second rule typed in vim as `resources: - ConfigMaps` → `get configmaps` = `no`, grader FAIL. Copied the task's wording | Tasks name **Kinds**; `resources:` needs the lowercase plural (`configmaps`, `k api-resources`). Generate every rule with `create role … $do >> r.yaml` — kubectl normalises `ConfigMaps` → `configmaps` and sets `apiGroups` — and only delete the 6 repeated header lines in vim | `LIT` | D1-3 1.1 | ✅ 5 Nov (R2) |
+| 143 | D1-3 1.1 | R1: `printf 'set ts=2 sw=2 et ai/n' > ~/.vimrc` → `.vimrc` broken; R2 opened vim on `E488: Trailing characters: ai/n` | Backslash: `\n`. The file survives `exit` — redo the per-host line when vim complains | `LIT` | D1-3 1.1 | ☐ |
+| 144 | D1-3 1.1 | R1: `… $do report-reader-role.yaml` — no `>` → file name taken as an argument, `--help` lookup | `$do > file`. The redirection is part of the line, not optional | `LIT` | D1-3 1.1 | ✅ 5 Nov (R2) |
+| 145 | D1-3 1.1 | R1 and R2: proof only for the rule the task names (list/watch yes, delete no); the second, hand-written rule never checked | One `yes` per rule written — `k -n X describe role R` (2 s) shows every rule | `PREC` | D1-3 1.1 | ✅ 8 Nov (R6 + two cold runs) |
+| 146 | D1-3 1.1 | R1 12:25 · R2 5:35 vs 4:00. R1 looked up `create rolebinding -h` and `auth can-i -h` | Flag order (NAME · `--role=` · `--serviceaccount=ns:sa`) and `--as=system:serviceaccount:ns:sa` from memory. R3 cold next session | `SPEED` | D1-3 1.1 | ✅ 8 Nov (cold 3:46 · 3:24) |
+| 147 | D1-3 1.1 | After R1: thought `-n finance` on the RoleBinding was redundant with `--serviceaccount=finance:…` | The SA's namespace says WHO; `-n` says where the binding lives = where the permission applies. Measured: without `-n` the binding lands in `default` and the SA gets `no` in its own namespace (6 FAILs) | `CONF` | D1-3 1.1 | ☐ |
+
+### Rows 148–152 — 7 Nov, D1-3 1.1 blind runs R3–R6 + 1.6 guided pass
+
+| # | Source | Error | Correction | Root cause | Note | Fixed |
+|---|---|---|---|---|---|---|
+| 148 | D1-3 1.1 | R3: `create role … --subresource=pod/logs` → failed; clock stopped, run voided | `--subresource=` belongs to `auth can-i` only. In `create role` the subresource goes inside `--resource=pods/log` (`pods/exec`, `pods/portforward`, `deployments/scale`) | `CONF` | D1-3 1.1 | ✅ 7 Nov (R4–R6) |
+| 149 | D1-3 1.1 | R3′: `--resource=pods/logs` → accepted silently, logs `no`, grader FAIL — right after being warned about it | `pods/log`, singular. kubectl does not validate subresource names; list them with `k get --raw /api/v1 \| tr ',' '\n' \| grep '"name":"pods/'` | `LIT` | D1-3 1.1 | ✅ 7 Nov (R4, R6) |
+| 150 | D1-3 1.1 | R4: the second 6-line header was never deleted (`6dd` skipped or not saved) → duplicated keys, kubectl kept only the last `rules:` → first rule silently lost; the task's own `can-i list pods` would have said `no` | After vim: `grep -c apiVersion r.yaml` = 1; after apply: `describe role` = one row per rule | `PREC` | D1-3 1.1 | ✅ 7 Nov (R5, R6) |
+| 151 | D1-3 1.1 | R5 3:37: "update on the scale subresource of Deployments" written as `--resource=deployments` → no scale, full update on Deployments (over-privileged) | Read the whole noun phrase: "X subresource of Y" = `Y/X` | `READ` | D1-3 1.1 | ✅ 7 Nov (R6) |
+| 152 | D1-3 1.6 | Guided: `vim /base/kustomization.yaml` → `E212: Can't open file for writing`; overlay folder created as `overlay/` not `overlays/` | A leading `/` = from the filesystem root. Relative paths from the current dir; task paths copied literally. Rescue a buffer with `:w <right path>` | `LIT` | D1-3 1.6 | ☐ |
+
+Also 7 Nov: `.vimrc` written as `set st=2 …` (tabstop stayed 8; no error) — same family as row 143.
+
+### Rows 153–158 — 8 Nov, D1-3 1.6 drill H1 + micro-drills, 1.8
+
+| # | Source | Error | Correction | Root cause | Note | Fixed |
+|---|---|---|---|---|---|---|
+| 153 | D1-3 1.6 | H1 blind: release installed as `metrics-server` — the task said `metrics` → 4 grader FAILs, then `upgrade metrics` hit a release that did not exist | Copy every literal into a variable before the first command (`REL=metrics …`) and type only variables | `READ` | D1-3 1.6 | ✅ 8 Nov (H1 with variables, ×2) |
+| 154 | D1-3 1.6 | H1 blind: `helm upgrade … version 3.14.0` (no `--`, ×3), `metricsserver`, `helm search metrics-server` (no `repo`) | One skeleton for install/upgrade/template: `helm <verb> REL REPO/CHART -n NS [--version X] [--reuse-values] [--set k=v]`. Doubt → `helm <verb> --help \| grep -- --flag` | `LIT` | D1-3 1.6 | ✅ 8 Nov |
+| 155 | D1-3 1.6 | H1 blind: `k apply -k kustomization.yaml` (the file), after `cd`/`ls` through the tree although the task gave the full path | `-k` takes the **directory**; use the task's path as given (`OV=…`) | `CONF` | D1-3 1.6 | ✅ 8 Nov (H1 ×2, M4) |
+| 156 | D1-3 1.6 | M3: right release found, `helm uninstall web-b team-b` without `-n` → `release: not found` → restarted the search, 4:13 vs 2:00 | `not found` on something just seen = the namespace; `-n <ns>` from the NAMESPACE column of `helm list -A` | `READ` | D1-3 1.6 | ☐ |
+| 157 | D1-3 1.6 | M4 1st attempt: could not write the overlay fields from memory (asked for a generator) | No kubectl generator for kustomization.yaml. Six fields cover the exam: `namespace` · `namePrefix` · `nameSuffix` · `images` · `replicas` · `labels`; docs page *Declarative Management … Using Kustomize* | `GAP` | D1-3 1.6 | ✅ 8 Nov (M4 1:23) |
+| 158 | D1-3 1.6 | M5 2:05 vs 1:00 for one line | `k kustomize <dir> > file` — same shape as `helm template … > file` | `SPEED` | D1-3 1.6 | ☐ |
+
+**Coach errors, 8 Nov:**
+- The H1 setup only uninstalled releases named `metrics`/`ms`; the learner's `metrics-server` release survived, its namespace was deleted, the APIService went stale and froze every namespace deletion. Setup hardened (uninstall every release + delete the APIService and its cluster objects).
+- 1.4 closed on the learner's decision at 12:54 / 12:43 (< 1 min over 12:00, machine-bound) — recorded as such in `cka-D1.md`, not as a pass under target.
+
+**Coach errors, 7 Nov:**
+- Step 4 of 1.6 said every `helm upgrade` without `--reuse-values` loses earlier values. Measured while building drill H1: only an upgrade that **passes** `--set`/`-f` resets; an upgrade with no values keeps the previous ones. Corrected in chat and in the runbook.
+- A grader test created a Job right after restoring `lab-v137`; it was scheduled on the stopped `w2` (stale `Ready`) and stuck `Terminating`. Lab fix: `kubectl cordon w2` after every restore when w2 stays off.
+
+**Coach errors, 4–5 Nov:**
+- The runbook's `… | tail -6 >> r.yaml` trick broke as soon as the second rule had two verbs or two resources (measured) — replaced.
+- Step 7 used `leak.yaml` without giving its content — added.
+
 ### Practice scores — Block 2
 
 | Date | Paper | Score | Time used | Weakest domain |

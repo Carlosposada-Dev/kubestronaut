@@ -168,6 +168,12 @@ Kubernetes API, so mounting a credential into them is pure attack surface.
 *Two objects say what may be done; two say who may do it. The only difference
 within each pair is whether it applies to one namespace or the whole cluster.*
 
+> **The model in one line** (the learner's anchor, 5 Nov): someone (**subject**) may
+> do something (**verb**) to something (**resource**) somewhere (**namespace** or
+> cluster).
+> **ServiceAccount = who · Role = what · RoleBinding = to whom and where ·
+> `auth can-i` = the proof.**
+
 RBAC lives in the API group **`rbac.authorization.k8s.io/v1`**.
 
 | | Defines permissions | Grants them to subjects |
