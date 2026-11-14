@@ -451,8 +451,9 @@ never translated. Files are edited **in place in this repo** and committed at
 ## 10. CKAD — Sat 14 Nov → Fri 20 Nov, exam Sat 21 Nov (re-cut 13 Nov)
 
 **Files.** `ckad/ckad-curriculum.md` (objectives, the reported-task list R1–R16,
-scoreboard) and one runbook per domain, `ckad/ckad-D1.md … ckad-D5.md`, each numeral a
-sub-session. They are r1 skeletons with unmeasured draft paths; each numeral is
+scoreboard) and, per domain, an index `ckad/ckad-D<n>.md` (content map, drill table,
+scoreboard) plus content files `ckad-D<n>-<k>-<group>.md` — **one file = one
+sub-session** (the CKA D1/D2 pattern). They are r1 skeletons with unmeasured draft paths; each numeral is
 migrated to Template C the day it is worked. Topics already worked in CKA are **not
 rewritten** — `ckad-D2.md` and `ckad-D4.md` point at `cka-D2-1-workloads.md` 2.1 and
 `cka-D1-3-access.md` 1.1 / 1.6 / 1.8.
@@ -625,7 +626,7 @@ kubestronaut/
 ├── notes/    notes_01–11 (+12–14 only if CKS week happens) — shared by all exams
 ├── kcna/     kcna-curriculum.md                               ✅ closed
 ├── cka/      cka-curriculum.md, cka-bashrc.sh, cka-D1 (+ -1/-2/-3), cka-D2 (+ -1/-2), cka-D3…D5
-├── ckad/     ckad-curriculum.md, ckad-D1…D5 (created 13 Nov)
+├── ckad/     ckad-curriculum.md, ckad-D1…D5 indexes + -<k>-<group> content files (created 13 Nov)
 ├── cks/      created Sun 22 Nov, if at all
 ├── lab/      lab-kubeadm-3-nodos-tutorial.md, build/ (lab scripts + ckad-addons.sh)
 └── tools/    checkrefs.py, semcheck.py
