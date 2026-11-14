@@ -1,7 +1,10 @@
 # plan.md — CKA · CKAD · CKS by 30 Nov 2026
 
 > Living document. Update STATUS after every exam, the progress log after every
-> session. **Last updated: Fri 16 Oct 2026 (v5.0 — calendar re-cut after 10 days
+> session. **Last updated: Fri 13 Nov 2026 (v6.0 — CKA lost as a no-show on 7 Nov,
+> which also blocks CKS · support ticket open · **CKAD Sat 21 Nov is now the only
+> exam in the plan**, retake Fri 27 Nov · read §3 and §10 first; §4–§6 and §11 are the
+> frozen CKA/CKS chain).** Previous: Fri 16 Oct 2026 (v5.0 — calendar re-cut after 10 days
 > with zero hours: CKA moved Sun 18 Oct → Sat 7 Nov · CKAD Sat 21 Nov · CKS Sun 29 Nov
 > · expiration of all three confirmed 30 Nov · go/no-go rule rewritten for the wall
 > · practice week 31 Oct – 6 Nov conditional on the Fri 30 Oct checkpoint ·
@@ -68,10 +71,10 @@ days with zero hours.
 | Exam | Study window | Exam | STATUS |
 |---|---|---|---|
 | KCNA | — | 11 Sep | ✅ **88%** |
-| **CKA** | Sat 17 Oct – Tue 17 Nov | **Wed 18 Nov** (moved 3 Nov; was Tue 10 Nov) · killer.sh A1 10–12 Nov · A2 ~15–16 Nov | ◐ active |
-| CKAD | Sun 8 Nov – Fri 20 Nov (13 days) | **Sat 21 Nov** | ☐ **book now** (free to move) |
-| CKS | Sun 22 Nov – Sat 28 Nov (7 days) | **Sun 29 Nov** | ☐ **book now**; cancel Sun 22 Nov if the chain broke |
-| Buffer | Sun 22 – Mon 30 Nov | — | absorbs exactly **one** failure (§5) |
+| **CKA** | Sat 17 Oct – (frozen at D2 on 13 Nov) | ~~Wed 18 Nov~~ — **no-show Sat 7 Nov** | ❌ attempt lost · ticket TCCS-187948 open (reinstatement + 90-day extension asked) |
+| **CKAD** | Sat 14 Nov – Fri 20 Nov (7 days, §10) | **Sat 21 Nov** · retake **Fri 27 Nov** | ◐ active — **book it and check the portal** |
+| CKS | — | — | ⛔ cannot be scheduled without a CKA pass · depends on the ticket |
+| Buffer | Sat 28 – Mon 30 Nov | — | check-in trouble or no slot on the 27th. Never plan an exam on the 30th |
 
 > **31 Oct:** CKA date is now Tue 10 Nov (learner's call, 27 Oct). §3 scenarios, §5
 > and §6.2 below still assume Sat 7 Nov — **re-cut owed**. Goal unchanged: CKA + CKAD
@@ -93,6 +96,22 @@ days with zero hours.
 >
 > Pace: ~14 bullets from Wed 4 to Sun 8 (~3/day). Cut list stands (§4) + 1.5 / 1.8
 > recognise-only.
+
+> **13 Nov — CKA lost, plan re-cut around CKAD (v6.0).** The 3 Nov move to Wed 18 Nov
+> was never saved in the portal: the booking stayed on **Sat 7 Nov 10:00** and was
+> recorded as a no-show (found 13 Nov). CKS cannot be scheduled without a CKA pass.
+> Ticket **TCCS-187948** asks for a one-time reinstatement of the CKA attempt and a
+> 90-day extension of CKA/CKAD/CKS. **Nothing below counts on it.** Everything in this
+> section and in §4–§6, §11 that speaks about CKA or CKS dates is history from here on.
+>
+> | If the ticket… | Then |
+> |---|---|
+> | is refused or unanswered | CKAD is the 2026 result. CKA D2–D5 resume in 2027 with a new registration |
+> | reinstates CKA and extends | CKAD stays Sat 21 Nov. CKA resumes at D2 the day after the CKAD pass; dates re-cut then |
+> | reinstates without extending | CKA goes on the first free day after the CKAD result, sat as a free shot on D1 + CKAD overlap |
+>
+> **Rule added 13 Nov:** a booking or reschedule exists only when the confirmation
+> e-mail has arrived **and** My Portal shows the new date. Both are checked the same day.
 
 **Why these dates.** Saturday exams: the result (24 h) lands on Sunday, the next
 decision is made before Monday. CKAD reuses ~60% of CKA and is a speed exam →
@@ -429,19 +448,58 @@ never translated. Files are edited **in place in this repo** and committed at
 
 ---
 
-## 10. CKAD (Sun 8 Nov – Fri 20 Nov), exam Sat 21 Nov
+## 10. CKAD — Sat 14 Nov → Fri 20 Nov, exam Sat 21 Nov (re-cut 13 Nov)
 
-- Sun 8 Nov: CKA result lands; if ✅, open the CKAD chat the same day. Days 1–6:
-  multi-container patterns, Jobs/CronJobs, probes, SecurityContext,
-  ServiceAccounts, requests/limits, Deployments strategies.
-- Days 7–13: blue/green and canary, Helm, Kustomize, API deprecations, speed drills.
-- **Simulator A1 Sun 15 Nov · A2 Thu 19 Nov.**
-- Done when: A2 ≥ 75% **and** ≥ 15 min to spare. Below that, sit it anyway (§5) —
-  the retake fits Sat 28 Nov.
-- Files: `ckad/ckad-D<n>.md`, Template C from line one. One spaced review per
-  week for CKA D1 upgrade/etcd (CKS needs them, if CKS happens).
+**Files.** `ckad/ckad-curriculum.md` (objectives, the reported-task list R1–R16,
+scoreboard) and one runbook per domain, `ckad/ckad-D1.md … ckad-D5.md`, each numeral a
+sub-session. They are r1 skeletons with unmeasured draft paths; each numeral is
+migrated to Template C the day it is worked. Topics already worked in CKA are **not
+rewritten** — `ckad-D2.md` and `ckad-D4.md` point at `cka-D2-1-workloads.md` 2.1 and
+`cka-D1-3-access.md` 1.1 / 1.6 / 1.8.
+
+**Method per numeral** (the 4 Nov method — stages 1–2 skipped, a mini-shape only for
+NetworkPolicy): guided pass with outputs measured on the lab → card written the same
+day → blind timed run with a verified grader → one micro-drill with new wording.
+Budget **~45 min per numeral**; literals into shell variables before the first
+command; one proof per requirement.
+
+**Hours.** Sat 14 · Sun 15 · Mon 16 (holiday): up to 6 h each, in two blocks with a
+real break. Tue–Thu: 3 h. Fri 20: 2 h. A numeral that does not fit moves to the next
+day's first slot — never into the night. The exam is sat rested or not at all.
+
+| Day | Domain · numerals (reported tasks) | Closes with |
+|---|---|---|
+| Fri 13 | **Book CKAD for Sat 21** (e-mail + portal). No study | — |
+| **Sat 14** | Lab: `lab/build/ckad-addons.sh` + snapshot. **D2**: 2.2 R1 blind + R16 · 2.3/2.4 H1 cold ×2 · 2.1 blue/green + canary (R6). **D1**: 1.2 Job / CronJob (R3, R5) | D2 4/4 |
+| **Sun 15** | **D4**: 4.3 quota (R4) · 4.4 ConfigMaps · 4.5 Secrets (R13) · 4.6 + 4.2 ServiceAccount + RBAC (R10, R11) · 4.7 securityContext (R7) | D4 7/7 |
+| **Mon 16** (holiday) | **D5**: 5.2 Services (R15) · 5.3 Ingress (R8) · the fix task (R9) · 5.1 NetworkPolicy (R12). **D1**: 1.1 podman (R1) | D5 3/3 |
+| Tue 17 | **D3**: 3.2 probes + **D1** 1.3 init / sidecar (R14) · 3.1 deprecations (R2) · 3.3–3.5 top, logs, debug ladder | D3 5/5 |
+| Wed 18 | **D1** 1.4 volumes (1 h) · **killer.sh session 1** (2 h, exam conditions) | D1 4/4 · score |
+| Thu 19 | Every killer.sh miss redone (the session stays open 36 h) · **Mock A** = R1–R16 in exam wording, timed | misses list |
+| Fri 20 | ≤ 2 h: cards, literals, the misses list. Stop by 20:00 | — |
+| **Sat 21** | **CKAD** | — |
+| Sun 22 – Thu 26 | Only after a ❌: score report → the weak domains · killer.sh session 2 on Tue 24 – Wed 25 | — |
+| **Fri 27** | Retake · Sat 28 – Mon 30 is buffer, not a plan | — |
+
+**Order = points per hour.** D2 first because three of its four bullets need one run
+to close; D4 second because it is 25% and six reported tasks; D5 third (four reported
+tasks); D3 and the rest of D1 on weekdays because their numerals are short.
+
+**Cut list, in this order, if a day is lost:** 1.4 volumes → guided pass only ·
+DaemonSet / StatefulSet → recognise-only · admission control → the three error
+messages · 3.3 / 3.4 → read the card once. **Never cut:** the 16 reported tasks, Helm,
+killer.sh session 1.
+
+**Go / no-go: there is none.** With a free retake and the wall on 30 Nov, sitting on
+Sat 21 is correct whatever killer.sh says (it is harder than the exam; ≥ 60% there is
+a comfortable pass). The exam can be moved until 24 h before — and is not.
+
+**Session titles:** `CKAD D<n>: <Name-with-hyphens>`, one session per domain.
 
 ## 11. CKS (Sun 22 Nov – Sat 28 Nov), exam Sun 29 Nov — free shot
+
+> **On hold since 13 Nov:** CKS needs a CKA pass and the CKA attempt was lost (§3).
+> Kept for the day the ticket reinstates it.
 
 Sat only if **both** CKA (7 Nov) and CKAD (21 Nov) passed at the first attempt.
 Cancelled the day any retake is needed. Seven days cannot cover the syllabus; the
@@ -567,9 +625,9 @@ kubestronaut/
 ├── notes/    notes_01–11 (+12–14 only if CKS week happens) — shared by all exams
 ├── kcna/     kcna-curriculum.md                               ✅ closed
 ├── cka/      cka-curriculum.md, cka-bashrc.sh, cka-D1 (+ -1/-2/-3), cka-D2 (+ -1/-2), cka-D3…D5
-├── ckad/     created Sun 8 Nov
+├── ckad/     ckad-curriculum.md, ckad-D1…D5 (created 13 Nov)
 ├── cks/      created Sun 22 Nov, if at all
-├── lab/      lab-kubeadm-3-nodos-tutorial.md
+├── lab/      lab-kubeadm-3-nodos-tutorial.md, build/ (lab scripts + ckad-addons.sh)
 └── tools/    checkrefs.py, semcheck.py
 ```
 
@@ -611,6 +669,8 @@ copy wins on conflict.**
 | **11-04 → 05** | CKA | _owed_ (laptop, cp1 + w1) | **D1-3 session, 1.1 RBAC.** Stage-3 guided pass steps 1–7 (4 Nov) with outputs measured on `lab-v137`: binding to a non-existent role via Tab completion → `no - RBAC: … not found` → `replace --force` (row 137); singular/plural SA vs group (139); `apply` before the vim edit caught by the jsonpath proof (141). Runbook: `tail -6` trick dropped (broke with two verbs), `leak.yaml` added, WHO-vs-WHERE subject table, the model line also in notes_07 §1.5. **Blind runs (5 Nov):** R1 `finance` **12:25, 9/10** (`ConfigMaps` typed in vim, `/n` in `.vimrc`, missing `>`, `-h` lookups — rows 142–146) → **two-rule method adopted** (generate both rules with `$do >> r.yaml`, delete the 6-line header in vim) → R2 `billing` **5:35, 11/11**. 1.1 open (target 4:00). **1.6:** Helm cycle measured on cp1 with metrics-server 3.14.0 (install `--set args={--kubelet-insecure-tls}`, `upgrade` without `--reuse-values` **drops earlier `--set`**, rollback = new revision, `helm list` without `-n` = default only); guided pass at step 1. Lab: WSL DNS broken after the restart (Windows resolves, WSL tunnel times out; VMs resolve fine) — pull done with `-c http.curloptResolve`. Next: **R3 1.1 cold, new literals** → 1.6 step 2 (`show values`) → Kustomize → 1.8 → §9 B–D | _owed_ |
 | **11-07** | CKA | _owed_ (laptop, cp1 + w1; w2 cordoned) | **D1-3 continued. 1.1 blind runs R3–R6** (new literals each, graders verified): R3 voided at 4:20 (`--subresource` in `create role`, row 148) · R3′ 6:08 11/12 (`pods/logs`, 149) · R4 4:34 9/11 (2nd header left → first rule silently lost, 150) · R5 **3:37** 9/11 (`deployments` without `/scale`, 151) · **R6 4:14, 11/11** — first clean run with one `can-i` per rule. Speed is there; every miss would have been caught by a `can-i` per rule. **1.6 guided pass done:** Helm steps 1–5 (repo · `show values` · install with `--set args={…}` · upgrade/history/rollback · template/uninstall) + Kustomize base + overlay (`prod-web` 3/3, nginx:1.29). Measured: x509 without `--kubelet-insecure-tls`; wrong `--set` key silently ignored; `--set` without `--reuse-values` resets, no values keeps; `images.name` wrong → silently ignored. Runbook: 1.6 measured-facts table + card; drill H1 (Helm + Kustomize, 6:00) with verified grader. Lab: **cordon w2 after each restore** (pods landed on the stopped w2). Learner: "Helm is a world apart — practise what the exam asks"; asked for the drill. **CKA pace: ~2 days behind §3** (D2 + D3 were Thu 5 – Sun 8). Next: **two cold 1.1 runs** → **drill H1** → 1.8 recognise-only + Task D → close D1-3 → D2 | _owed_ |
 | **11-08** | CKA | _owed_ (laptop, cp1 + w1, w2 cordoned) | **D1-3 close.** **1.1 ✅ cold 3:46 + 3:24, both 11/11.** **1.4 ✅ by learner decision** (desktop upgrade 12:54 · 12:43, < 1 min over, machine-bound). **1.6:** guided pass of drill H1 (G1–G4), then H1 blind **15:37, 7/11** (release `metrics-server` ≠ `metrics`, `version` without `--`, `-k` on the file — rows 153–155) → **literal-variables method adopted** → 10:59 11/11 → **6:32 11/11**; micro-drills with new wording M1 rollback 1:16 ✅ · M2 template 1:07 ✅ · M3 find + uninstall 4:13 (no `-n`, row 156) · M4 namespace + prefix 1:23 ✅ · M5 render 2:05 — **5/5 correct**. Measured: `--set` lists need quotes (bash brace expansion), `--reuse-values` only on `upgrade`, a stale metrics APIService froze every namespace deletion (setup hardened). **1.8 ✅** recognise-only (32 CRDs, scope, explain, operator, CR vs CRD delete on a demo CRD), Task D 0:41. Learner: "the hard part is identifying the literals and understanding what is asked" → variables. **D1 7/8** (1.6 open on H1 cold). Pace: D2 starts ~3 days behind §3 (D2 + D3 were Thu 5 – Sun 8). Next: **H1 cold ×2** (start of a session) → **D2** | _owed_ |
+| **11-08 → 09** | CKA | _owed_ (laptop, cp1 + w1) | **D2 2.1 guided pass** steps 1–7 on `lab-v137` (ns `d21`), outputs measured; `cka-D2-1-workloads.md` r2 — 2.1 in Template C + §9 R1 (`orders` / `checkout`, grader verified 2/6 · 6/6 · 3/6). **`cierre` never run:** the session's misses are not in `mistakes.md` yet; R1 blind owed (now `ckad-D2.md §7` row 3) | _owed_ |
+| **11-13** | plan | — | **CKA attempt lost: no-show on Sat 7 Nov.** The 3 Nov reschedule to 18 Nov was never saved in the portal. CKS blocked with it. Ticket TCCS-187948 (reinstatement + 90-day extension). **Plan v6.0: CKAD Sat 21 Nov, retake Fri 27 Nov** (§3, §10). `ckad/` created: curriculum with the reported-task list R1–R16 + `ckad-D1…D5` r1 skeletons (draft paths unmeasured); `lab/build/ckad-addons.sh` written, **not run** (lab was down). CKA frozen at D1 7/8, D2 2.1 guided. Next (Sat 14): book the exam · add-ons + snapshot · D2 · D1 1.2 | — |
 
 **Owed:** hours + confidence for 14–23 Sep and 27 Sep; the 18–23 Sep drill times for
 `cka-D1.md §7`; the 28 Sep – 5 Oct record (what, if anything, was done).
