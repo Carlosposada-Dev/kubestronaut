@@ -12,7 +12,7 @@ revision: 2026-11-13 (r1 — split out of `ckad-D3.md` the day it was written; m
 
 # D3 · Group 1 — Keep It Valid and Healthy (bullets 3.1, 3.2)
 
-> Index, drill table and scoreboard: **`ckad-D3.md`**. Session: **Tue 17 Nov** (`plan.md §10`).
+> Index, drill table and scoreboard: **`ckad-D3.md`**. Session: **Mon 7 Dec** (`plan.md §10.2`).
 > Objectives and the reported-task list (R#): `ckad-curriculum.md`.
 > Legend, typing conventions: `cka/cka-D1-2-lifecycle.md` (reference implementation).
 >

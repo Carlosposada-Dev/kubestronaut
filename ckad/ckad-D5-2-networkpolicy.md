@@ -12,7 +12,7 @@ revision: 2026-11-13 (r1 — split out of `ckad-D5.md` the day it was written; m
 
 # D5 · Group 2 — Restrict the Traffic (bullet 5.1)
 
-> Index, drill table and scoreboard: **`ckad-D5.md`**. Session: **Mon 16 Nov, second block** (`plan.md §10`).
+> Index, drill table and scoreboard: **`ckad-D5.md`**. Session: **Sat 5 Dec** (`plan.md §10.2`).
 > Objectives and the reported-task list (R#): `ckad-curriculum.md`.
 > Legend, typing conventions: `cka/cka-D1-2-lifecycle.md` (reference implementation).
 >

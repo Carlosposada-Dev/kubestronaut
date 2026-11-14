@@ -5,8 +5,9 @@ notes, runbooks, plan, mistakes. Edit files in place; nothing lives only in chat
 
 ## Goal and schedule
 
-CKA, CKAD and CKS before **30 Nov 2026** (hard deadline, retakes included).
-KCNA passed 11 Sep 2026 (88%). KCSA dropped.
+CKAD, CKA and CKS before **28 Feb 2027** (extended once by the LF on 14 Nov 2026 —
+no further extension, retakes included); KCSA before 6 Mar 2027.
+KCNA passed 11 Sep 2026 (88%).
 **`plan.md` owns every date, scope and priority decision** — read it before answering
 any of those questions, and if this file disagrees with it, `plan.md` wins.
 

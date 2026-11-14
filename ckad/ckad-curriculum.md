@@ -20,7 +20,7 @@
 | Tasks | ~15–20, each on a designated SSH host (`plan.md §13`) |
 | Allowed docs | kubernetes.io/docs, the Kubernetes blog, helm.sh/docs — **no Gateway API docs** (CKA only) |
 | Simulator | killer.sh — 2 sessions (same questions), 36 h each |
-| Retake | 1 free. Registration expires **30 Nov 2026** |
+| Retake | 1 free. Registration expires **28 Feb 2027** (extended 14 Nov, final) |
 
 **What kind of exam it is.** No cluster administration: no kubeadm, no etcd, no node
 work. Every task is "make this application object right, in this namespace". It is a

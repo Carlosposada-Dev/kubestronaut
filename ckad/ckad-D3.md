@@ -28,8 +28,8 @@ one-liners whose only trap is writing the answer to the file the task names.
 
 | File | Bullets | Covers | Session |
 |---|---|---|---|
-| **`ckad-D3-1-health.md`** | 3.1, 3.2 | Understand API deprecations · Implement probes and health checks | Tue 17 Nov |
-| **`ckad-D3-2-observe.md`** | 3.3, 3.4, 3.5 | Use built-in CLI tools to monitor applications · Utilize container logs · Debugging in Kubernetes | Tue 17 Nov |
+| **`ckad-D3-1-health.md`** | 3.1, 3.2 | Understand API deprecations · Implement probes and health checks | Mon 7 Dec |
+| **`ckad-D3-2-observe.md`** | 3.3, 3.4, 3.5 | Use built-in CLI tools to monitor applications · Utilize container logs · Debugging in Kubernetes | Tue 8 Dec |
 
 > The content files follow **Template C** (`claude/note-templates.md`) from the day
 > each bullet is worked: `The shape` → `The whiteboard` → `Command card` → `Traps`

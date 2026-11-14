@@ -12,7 +12,7 @@ revision: 2026-11-13 (r1 — split out of `ckad-D4.md` the day it was written; m
 
 # D4 · Group 1 — Limits and Configuration (bullets 4.3, 4.4, 4.5)
 
-> Index, drill table and scoreboard: **`ckad-D4.md`**. Session: **Sun 15 Nov, first block** (`plan.md §10`).
+> Index, drill table and scoreboard: **`ckad-D4.md`**. Session: **Wed 2 Dec** (`plan.md §10.2`).
 > Objectives and the reported-task list (R#): `ckad-curriculum.md`.
 > Legend, typing conventions: `cka/cka-D1-2-lifecycle.md` (reference implementation).
 >

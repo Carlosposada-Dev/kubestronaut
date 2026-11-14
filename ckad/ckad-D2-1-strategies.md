@@ -12,7 +12,7 @@ revision: 2026-11-13 (r1 — split out of `ckad-D2.md` the day it was written; m
 
 # D2 · Group 1 — Roll It Out (bullets 2.1, 2.2)
 
-> Index, drill table and scoreboard: **`ckad-D2.md`**. Session: **Sat 14 Nov** (`plan.md §10`).
+> Index, drill table and scoreboard: **`ckad-D2.md`**. Session: **Mon 30 Nov** (`plan.md §10.2`).
 > Objectives and the reported-task list (R#): `ckad-curriculum.md`.
 > Legend, typing conventions: `cka/cka-D1-2-lifecycle.md` (reference implementation).
 >

@@ -36,8 +36,8 @@ two `create deployment` and a selector.
 
 | File | Bullets | Covers | Session |
 |---|---|---|---|
-| **`ckad-D2-1-strategies.md`** | 2.1, 2.2 | Blue/green and canary with Kubernetes primitives · Deployments and rolling updates | Sat 14 Nov |
-| **`ckad-D2-2-packaging.md`** | 2.3, 2.4 | Helm · Kustomize | Sat 14 Nov |
+| **`ckad-D2-1-strategies.md`** | 2.1, 2.2 | Blue/green and canary with Kubernetes primitives · Deployments and rolling updates | Mon 30 Nov |
+| **`ckad-D2-2-packaging.md`** | 2.3, 2.4 | Helm · Kustomize | Tue 1 Dec |
 
 > The content files follow **Template C** (`claude/note-templates.md`) from the day
 > each bullet is worked: `The shape` → `The whiteboard` → `Command card` → `Traps`

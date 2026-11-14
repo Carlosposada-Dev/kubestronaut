@@ -35,8 +35,8 @@ cluster offers (4.1).
 
 | File | Bullets | Covers | Session |
 |---|---|---|---|
-| **`ckad-D4-1-config.md`** | 4.3, 4.4, 4.5 | Requests, limits and quotas · ConfigMaps · Create and consume Secrets | Sun 15 Nov, first block |
-| **`ckad-D4-2-identity.md`** | 4.1, 4.2, 4.6, 4.7 | CRDs and operators · Authentication, authorization and admission control · ServiceAccounts · Application security | Sun 15 Nov, second block |
+| **`ckad-D4-1-config.md`** | 4.3, 4.4, 4.5 | Requests, limits and quotas · ConfigMaps · Create and consume Secrets | Wed 2 Dec |
+| **`ckad-D4-2-identity.md`** | 4.1, 4.2, 4.6, 4.7 | CRDs and operators · Authentication, authorization and admission control · ServiceAccounts · Application security | Thu 3 Dec |
 
 > The content files follow **Template C** (`claude/note-templates.md`) from the day
 > each bullet is worked: `The shape` → `The whiteboard` → `Command card` → `Traps`

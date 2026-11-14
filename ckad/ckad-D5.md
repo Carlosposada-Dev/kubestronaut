@@ -30,8 +30,8 @@ mismatch between two strings; the method is to print both sides next to each oth
 
 | File | Bullets | Covers | Session |
 |---|---|---|---|
-| **`ckad-D5-1-services-ingress.md`** | 5.2, 5.3 | Provide and troubleshoot access via Services · Use Ingress rules to expose applications | Mon 16 Nov, first block |
-| **`ckad-D5-2-networkpolicy.md`** | 5.1 | Basic understanding of NetworkPolicies | Mon 16 Nov, second block |
+| **`ckad-D5-1-services-ingress.md`** | 5.2, 5.3 | Provide and troubleshoot access via Services · Use Ingress rules to expose applications | Sat 5 Dec |
+| **`ckad-D5-2-networkpolicy.md`** | 5.1 | Basic understanding of NetworkPolicies | Sat 5 Dec |
 
 > The content files follow **Template C** (`claude/note-templates.md`) from the day
 > each bullet is worked: `The shape` → `The whiteboard` → `Command card` → `Traps`

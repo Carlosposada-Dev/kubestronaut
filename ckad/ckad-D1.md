@@ -29,9 +29,9 @@ containers share its Pod (1.3) and where its data lives (1.4).
 
 | File | Bullets | Covers | Session |
 |---|---|---|---|
-| **`ckad-D1-1-images.md`** | 1.1 | Define, build and modify container images | Mon 16 Nov |
-| **`ckad-D1-2-workloads.md`** | 1.2 | Choose and use the right workload resource | Sat 14 Nov |
-| **`ckad-D1-3-pod-design.md`** | 1.3, 1.4 | Multi-container Pod design patterns · Utilize persistent and ephemeral volumes | Tue 17 Nov (1.3) · Wed 18 Nov (1.4) |
+| **`ckad-D1-1-images.md`** | 1.1 | Define, build and modify container images | Tue 8 Dec |
+| **`ckad-D1-2-workloads.md`** | 1.2 | Choose and use the right workload resource | Tue 1 Dec |
+| **`ckad-D1-3-pod-design.md`** | 1.3, 1.4 | Multi-container Pod design patterns · Utilize persistent and ephemeral volumes | Wed 9 Dec |
 
 > The content files follow **Template C** (`claude/note-templates.md`) from the day
 > each bullet is worked: `The shape` → `The whiteboard` → `Command card` → `Traps`

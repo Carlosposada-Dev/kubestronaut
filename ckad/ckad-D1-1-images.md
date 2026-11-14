@@ -12,7 +12,7 @@ revision: 2026-11-13 (r1 — split out of `ckad-D1.md` the day it was written; m
 
 # D1 · Group 1 — Build the Image (bullet 1.1)
 
-> Index, drill table and scoreboard: **`ckad-D1.md`**. Session: **Mon 16 Nov** (`plan.md §10`).
+> Index, drill table and scoreboard: **`ckad-D1.md`**. Session: **Tue 8 Dec** (`plan.md §10.2`).
 > Objectives and the reported-task list (R#): `ckad-curriculum.md`.
 > Legend, typing conventions: `cka/cka-D1-2-lifecycle.md` (reference implementation).
 >
