@@ -594,6 +594,17 @@ week is spent on the highest-weight, most mechanical items so the shot is not bl
 Source: *Important Instructions: CKA and CKAD* (docs.linuxfoundation.org,
 updated mid-Sep 2026). Re-read it the week of the exam.
 
+> **Re-checked 18 Nov 2026** (LF page text pasted by the learner): unchanged. One task =
+> one designated host, `exit` back to `base`, no nested ssh, `sudo -i`; every host has `k` +
+> completion, `yq`, `curl`/`wget`, `man`; `base` has none. **CKA and CKAD both run v1.37.**
+> New sentence on the page: the environment follows the newest Kubernetes minor **about 4–8
+> weeks after its release**. Consequence for plan v7.0 (inference, not official): if v1.38
+> ships in December 2026 (the ~4-month cadence; check kubernetes.io/releases), the exam can
+> move to v1.38 between mid-January and mid-February, which overlaps the CKA (16 Jan) and
+> CKS (13 Feb) windows. Then the upgrade task becomes 1.37 → 1.38 and the lab needs
+> `lab-v138` (change the two minors in `lab/build/build-lab.sh` and `build-w3.sh`).
+> CKAD on 12 Dec is not affected. **Re-read the LF page the week before every exam.**
+
 **What the exam gives you.** Every task runs on a **designated SSH host** named in
 the task's infobox. Every SSH host ships **`kubectl` with the `k` alias and Bash
 completion already configured**, plus `yq`, `curl`/`wget` and man pages. The
