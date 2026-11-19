@@ -98,6 +98,23 @@ runbook's `## §9. Exam mode` when it exists.
   per check.
 - **A FAIL is pasted, not fixed first.** Then debrief: root cause, mistakes row.
 
+### Language by stage (18 Nov)
+
+The exam is in English and reading the task is a measured weak spot (8 Nov: *"the hard
+part is identifying the literals and understanding what is asked"*). Understanding a
+mechanism is not trained in a second language at the same time.
+
+| Part | Language |
+|---|---|
+| Stages 1–3 — walkthrough, shape, whiteboard: the *why* | Spanish |
+| Kubernetes terms, commands, every file and commit | English (never translated) |
+| Stage 4–5 task statements, timed runs, killer.sh | **English, never translated or paraphrased** |
+| Error messages, kubernetes.io searches | English — the learner reads the line aloud before acting |
+| Debrief after a miss | Spanish when the miss was understanding the task |
+
+- A phrase misread in a task → one row in `claude/task-phrasing.md`, the same day.
+- The last week before each exam: English throughout, unless the learner is stuck.
+
 ### Speed rule (26 Sep, hardened 16 Oct)
 
 Stages 1–3 are for **new mechanisms only**. A bullet whose mechanism is already in a

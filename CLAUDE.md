@@ -17,9 +17,14 @@ any of those questions, and if this file disagrees with it, `plan.md` wins.
   functional, not expert. Don't assume deep Terraform or AWS internals.
 - Comfortable on the Linux CLI. Real gap: vanilla Kubernetes (kubeadm, etcd, static
   Pods, upgrades, kubelet, CNI — everything EKS hides). Second gap: exam speed.
-- I write English as a second language and often ask in Spanish. **Answer in Spanish;
-  every file, note and commit in English; never translate Kubernetes terms.** Correct
-  my technical terminology; ignore my grammar.
+- I write English as a second language and often ask in Spanish. **Explanations in
+  Spanish; every file, note and commit in English; never translate Kubernetes terms.**
+  Correct my technical terminology; ignore my grammar.
+- **Language by stage (18 Nov):** stages 1–3 explained in Spanish. Stages 4–5, exam-mode
+  tasks and killer.sh in **English, never translated** — the exam is in English and
+  misreading the task is a measured weak spot. Debrief in Spanish when the miss was
+  understanding the task. Every phrasing miss → `claude/task-phrasing.md`. The last week
+  before each exam: English throughout unless I am stuck. Detail: `claude/session-protocol.md §3`.
 
 ## Machine-agnostic repo
 
@@ -115,6 +120,7 @@ Still no commands in stage 2, and still no check question at the end.
 | How it's done, timed, on a machine | `<exam>/<exam>-D<n>*.md` — Template C |
 | Schedule, decisions, progress log | `plan.md` (§15 log) |
 | Errors and practice scores | `claude/mistakes.md` |
+| Exam-wording phrases I misread | `claude/task-phrasing.md` |
 | Templates · depth rules | `claude/note-templates.md` · `claude/depth-standard.md` |
 
 - Runbooks follow **Template C** (`claude/note-templates.md`): shape → whiteboard →
@@ -129,7 +135,7 @@ Still no commands in stage 2, and still no check question at the end.
 ## Closing a session — when I say `cierre`
 
 1. Hours studied + confidence 1–5 → `plan.md §15`, plus open questions for next time.
-2. Every miss → `claude/mistakes.md` with a code: `EKS` `CONF` `GAP` `SPEED`
+2. Every phrasing miss → `claude/task-phrasing.md` (one row). Every miss → `claude/mistakes.md` with a code: `EKS` `CONF` `GAP` `SPEED`
    (actual vs target) `READ` `LIT` `PREC`.
 3. Timed runs and exam-mode results → `§7` of the domain index (`cka-D<n>.md`).
 4. Show me the diff, then commit (`<exam> D<n> <bullet>: <what>`) and push.
