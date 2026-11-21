@@ -6,7 +6,7 @@ exams: [CKA]
 index: cka-D1.md
 theory: notes_07, notes_10, notes_02
 status: 1.1 ✅ 8 Nov (cold 3:46 · 3:24) · 1.6 ◐ guided + H1 6:32 11/11, micro-drills 5/5 correct — H1 cold owed · 1.8 ✅ 8 Nov (recognise-only, Task D 0:41)
-revision: 2026-11-08 (r4 — 4–8 Nov session: 1.1 guided pass + R1–R6 + two cold runs, two-rule method; 1.6 measured facts, card, drill H1, micro-drills M1–M5; 1.8 migrated to Template C from the lab; §9 Task D setup + grader) · 2026-11-02 (r3 — structure audit against D1-1/D1-2, no content migrated: pending list below the header; stale mistakes-row references and lab date fixed) · 2026-09-28 (r2 — 1.1 migrated to Template C from the 27–28 Sep session; editing decision table; §9 RBAC tasks with graders) · prev r1 2026-09-14
+revision: '2026-11-08 (r4 — 4–8 Nov session: 1.1 guided pass + R1–R6 + two cold runs, two-rule method; 1.6 measured facts, card, drill H1, micro-drills M1–M5; 1.8 migrated to Template C from the lab; §9 Task D setup + grader) · 2026-11-02 (r3 — structure audit against D1-1/D1-2, no content migrated: pending list below the header; stale mistakes-row references and lab date fixed) · 2026-09-28 (r2 — 1.1 migrated to Template C from the 27–28 Sep session; editing decision table; §9 RBAC tasks with graders) · prev r1 2026-09-14'
 ---
 
 # D1 · Group 3 — Access & Extend the API (bullets 1.1, 1.6, 1.8)

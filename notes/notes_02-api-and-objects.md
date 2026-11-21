@@ -8,7 +8,7 @@ template: B
 language: en
 status: draft
 written: 2026-08-22
-revised: 2026-08-23 (v2 — depth standard: watch mechanics, ownerReferences, finalizers, real CRD, scenario drills)
+revised: '2026-08-23 (v2 — depth standard: watch mechanics, ownerReferences, finalizers, real CRD, scenario drills)'
 k8s_version_checked_against: v1.36 docs
 ---
 

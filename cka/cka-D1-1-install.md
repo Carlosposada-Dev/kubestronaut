@@ -6,7 +6,7 @@ exams: [CKA]
 index: cka-D1.md
 theory: notes_01, notes_04, notes_05, notes_06
 status: draft
-revision: 2026-10-30 (r6 — 1.2 card: tee pattern, vim :s, version pin + --allow-downgrades, lsmod lab-only; cgroup paragraph from v1.37 docs; 3 traps) · r5 2026-09-26 ( 1.3 CNI task + Pod CIDR ×3; 1.7 crictl method + .deb CRI; §9 sims A/B/C; stale CNI config; cleanw3) · r4 2026-09-26 (modules step CNI-dependent; bridge sysctls conditional) · r2 2026-09-23 (Template C) · r1 2026-09-14
+revision: '2026-10-30 (r6 — 1.2 card: tee pattern, vim :s, version pin + --allow-downgrades, lsmod lab-only; cgroup paragraph from v1.37 docs; 3 traps) · r5 2026-09-26 ( 1.3 CNI task + Pod CIDR ×3; 1.7 crictl method + .deb CRI; §9 sims A/B/C; stale CNI config; cleanw3) · r4 2026-09-26 (modules step CNI-dependent; bridge sysctls conditional) · r2 2026-09-23 (Template C) · r1 2026-09-14'
 ---
 
 # D1 · Group 1 — Install & Extend (bullets 1.2, 1.3, 1.7)
