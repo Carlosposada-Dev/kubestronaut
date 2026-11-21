@@ -505,6 +505,15 @@ skipped.
 **Order changed 18 Nov (learner's call): domain order, D1 → D5**, instead of D2 first.
 §10.2 is unchanged.
 
+**21 Nov — D1 runbooks written in full before they are read.** The learner asked for
+every CKAD content file in the CKA format (Template C), not an r1 skeleton. D1 done:
+`ckad-D1-1-images.md`, `-2-workloads.md`, `-3-pod-design.md` now hold shape (29 Oct
+format) → whiteboard measured on `ckad-v137` → card → traps → EKS → `§9 Exam mode` with
+verified graders; `ckad-D1.md` gained §0 (where every command runs) and an 11-row §7.
+The files are 3–5× longer, so **an hour of reading covers the shape, the card and the
+traps of a numeral**; the whiteboard is read in full in its §10.2 session. Dates below
+unchanged. D2–D5 get the same rewrite before their reading day.
+
 | Days | Read | With |
 |---|---|---|
 | Tue 17 | `ckad-curriculum.md` | — |
@@ -751,6 +760,7 @@ copy wins on conflict.**
 | **11-14** | plan | — | **Ticket TCCS-187948 granted:** CKA eligibility reset (one-time) and CKA + CKAD + CKS extended to **28 Feb 2027**; KCSA valid to 6 Mar 2027 → Kubestronaut reachable again. **Plan v7.0:** CKAD Sat 12 Dec · CKA Sat 16 Jan · CKS Sat 13 Feb · KCSA Sat 20 Feb (§3). Pace rule: 8–10 h a week, one day off, no day over 3 h (§1). `ckad/` split into indexes + 11 content files (one file = one sub-session). Rest: 14–16 Nov nothing; 17–29 Nov 1 h of reading a day (§10.1); full pace from Mon 30 Nov (§10.2). Owed: book the four exams (e-mail + portal) · run `ckad-addons.sh` | — |
 | **11-18** | CKAD | _owed_ (laptop, no lab) | **CKAD D1-1 1.1, reading-week walkthrough (stage 1), stopped at part 1 of 3**: file map (r1 skeleton, draft paths unmeasured, podman not on kubernetes.io → `--help` only) and Dockerfile instructions (`FROM` `RUN` `COPY` `ENV` `USER`, build time vs run time, `ENTRYPOINT`→`command` / `CMD`→`args`, `RUN rm` does not remove a secret). **Reading order changed to domain order D1 → D5** (§10.1 re-cut; §10.2 unchanged). Language-by-stage rule adopted the same day (`session-protocol.md §3`). No questions from the learner. Next (desktop): D1-1 part 2 build/run/logs → part 3 save/load vs export/import, tag/push, OCI → `ckad-D1-2-workloads.md` | _owed_ |
 | **11-21** | lab | — | **CKAD add-ons on the desktop lab, snapshot `ckad-v137`** (child of `lab-v137`, cp1 w1 w2): `lab/build/ckad-addons.sh` run for the first time — podman 4.9.3 on cp1 · ingress-nginx chart 4.15.1 (NodePort 30080, acceptance 200 ✅) · **metrics-server added to the script** (chart 3.14.0, `kube-system`, `kubectl top nodes` ✅) · `SNAPSHOT=yes` takes the snapshot and restarts the nodes. Fixed on the way: the test namespace was caught `Terminating` in the first snapshot (now `--wait=true`, snapshot retaken) · with an inherited stdin the restart stopped silently with exit 0 (now `exec < /dev/null`). After restore ~90 s for pods, ~60 s more for the Metrics API. Laptop still on `lab-v137` only. Organizer session for CKAD + one sub-session per content file started on the desktop | — |
+| **11-21** | CKAD | — (organizer, desktop) | **CKAD D1 runbooks rewritten in Template C, measured on `ckad-v137`.** 1.1 podman 4.9.3 rootless: separate store per user (`sudo podman images` empty) · short names fail outside `shortnames.conf` · `save` default = docker-archive, OCI = `--format oci-archive` (`index.json` + `oci-layout`) · `save -o` onto an existing file fails · `export`+`import` loses CMD/ENV/USER · a failed `export -o` leaves a 0-byte file · `localhost:5000` push needs `--tls-verify=false` · `rmi -f` deletes the containers using the image · a podman image is invisible to the kubelet (ImagePullBackOff). 1.2: `create job` has no `--restart` (writes `Never`), `create cronjob` writes `OnFailure`, Pod-level `activeDeadlineSeconds` accepted silently, DaemonSet `DESIRED 2` without the control-plane toleration, no StorageClass in the lab. 1.3/1.4: native sidecar lets a Job complete, a classic one never does · a hostPath PV is node-local · an unmatched PVC reports `storageclass "manual" not found` · static PV defaults to `Retain`. Each file: §9 Set 1 (3 + 4 + 4 tasks), graders verified against setup-only / correct / typical wrong. `ckad-D1.md` r3: §0 + §7 with 11 rows. YAML front matter fixed in 5 CKA/notes files (GitHub render error). D1-1 reading session paused at part 2 to resume on the new file | — |
 
 **Owed:** hours + confidence for 14–23 Sep and 27 Sep; the 18–23 Sep drill times for
 `cka-D1.md §7`; the 28 Sep – 5 Oct record (what, if anything, was done).
