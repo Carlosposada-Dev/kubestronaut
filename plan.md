@@ -495,14 +495,23 @@ Stage 1 of the method, nothing else: read the content file top to bottom next to
 note sections it names. No terminal needed, no timing, no questions. A day skipped is
 skipped.
 
+**Order changed 18 Nov (learner's call): domain order, D1 → D5**, instead of D2 first.
+§10.2 is unchanged.
+
 | Days | Read | With |
 |---|---|---|
-| Tue 17 – Wed 18 | `ckad-curriculum.md` · `ckad-D2-1-strategies.md` · `ckad-D2-2-packaging.md` | notes_10 §1.8–1.11 · the 2.1 card in `cka-D2-1-workloads.md` |
-| Thu 19 – Fri 20 | `ckad-D4-1-config.md` | notes_07 §1.9–1.10 · notes_03 §1.11 |
-| Sat 21 – Sun 22 | `ckad-D4-2-identity.md` | notes_07 §1.4, §1.11 · the 1.1 card in `cka-D1-3-access.md` |
-| Mon 23 – Tue 24 | `ckad-D5-1-services-ingress.md` · `ckad-D5-2-networkpolicy.md` | notes_05 §1.5, §1.7, §1.10, §1.12 |
-| Wed 25 – Thu 26 | `ckad-D3-1-health.md` · `ckad-D3-2-observe.md` | notes_08 §1.8, §1.11–1.12 |
-| Fri 27 – Sun 29 | `ckad-D1-1-images.md` · `ckad-D1-2-workloads.md` · `ckad-D1-3-pod-design.md` | notes_03 §1.7 · notes_04 §1.12 · notes_06 §1.4 |
+| Tue 17 | `ckad-curriculum.md` | — |
+| Wed 18 | `ckad-D1-1-images.md` — part 1 of 3 read (file map + Dockerfile) | notes_04 §1.10, §1.12, §1.14 |
+| Thu 19 – Fri 20 | nothing logged in §15 | — |
+| Sat 21 | `ckad-D1-1-images.md` parts 2–3 (build/run/logs · save vs export, tag/push, OCI) · `ckad-D1-2-workloads.md` | notes_03 §1.7 |
+| Sun 22 | `ckad-D1-3-pod-design.md` | notes_06 §1.4 |
+| Mon 23 | `ckad-D2-1-strategies.md` | notes_10 §1.8–1.11 · the 2.1 card in `cka-D2-1-workloads.md` |
+| Tue 24 | `ckad-D2-2-packaging.md` | notes_10 §1.8–1.11 |
+| Wed 25 | `ckad-D3-1-health.md` · `ckad-D3-2-observe.md` | notes_08 §1.8, §1.11–1.12 |
+| Thu 26 | `ckad-D4-1-config.md` | notes_07 §1.9–1.10 · notes_03 §1.11 |
+| Fri 27 | `ckad-D4-2-identity.md` | notes_07 §1.4, §1.11 · the 1.1 card in `cka-D1-3-access.md` |
+| Sat 28 | `ckad-D5-1-services-ingress.md` | notes_05 §1.5, §1.7, §1.10 |
+| Sun 29 | `ckad-D5-2-networkpolicy.md` | notes_05 §1.12 |
 
 Optional, any of those days: start the lab and run `lab/build/ckad-addons.sh` (never
 run yet), so Mon 30 Nov starts on a working lab.
@@ -733,6 +742,7 @@ copy wins on conflict.**
 | **11-08 → 09** | CKA | _owed_ (laptop, cp1 + w1) | **D2 2.1 guided pass** steps 1–7 on `lab-v137` (ns `d21`), outputs measured; `cka-D2-1-workloads.md` r2 — 2.1 in Template C + §9 R1 (`orders` / `checkout`, grader verified 2/6 · 6/6 · 3/6). **`cierre` never run:** the session's misses are not in `mistakes.md` yet; R1 blind owed (now `ckad-D2.md §7` row 3) | _owed_ |
 | **11-13** | plan | — | **CKA attempt lost: no-show on Sat 7 Nov.** The 3 Nov reschedule to 18 Nov was never saved in the portal. CKS blocked with it. Ticket TCCS-187948 (reinstatement + 90-day extension). **Plan v6.0: CKAD Sat 21 Nov, retake Fri 27 Nov** (§3, §10). `ckad/` created: curriculum with the reported-task list R1–R16 + `ckad-D1…D5` r1 skeletons (draft paths unmeasured); `lab/build/ckad-addons.sh` written, **not run** (lab was down). CKA frozen at D1 7/8, D2 2.1 guided. Next (Sat 14): book the exam · add-ons + snapshot · D2 · D1 1.2 | — |
 | **11-14** | plan | — | **Ticket TCCS-187948 granted:** CKA eligibility reset (one-time) and CKA + CKAD + CKS extended to **28 Feb 2027**; KCSA valid to 6 Mar 2027 → Kubestronaut reachable again. **Plan v7.0:** CKAD Sat 12 Dec · CKA Sat 16 Jan · CKS Sat 13 Feb · KCSA Sat 20 Feb (§3). Pace rule: 8–10 h a week, one day off, no day over 3 h (§1). `ckad/` split into indexes + 11 content files (one file = one sub-session). Rest: 14–16 Nov nothing; 17–29 Nov 1 h of reading a day (§10.1); full pace from Mon 30 Nov (§10.2). Owed: book the four exams (e-mail + portal) · run `ckad-addons.sh` | — |
+| **11-18** | CKAD | _owed_ (laptop, no lab) | **CKAD D1-1 1.1, reading-week walkthrough (stage 1), stopped at part 1 of 3**: file map (r1 skeleton, draft paths unmeasured, podman not on kubernetes.io → `--help` only) and Dockerfile instructions (`FROM` `RUN` `COPY` `ENV` `USER`, build time vs run time, `ENTRYPOINT`→`command` / `CMD`→`args`, `RUN rm` does not remove a secret). **Reading order changed to domain order D1 → D5** (§10.1 re-cut; §10.2 unchanged). Language-by-stage rule adopted the same day (`session-protocol.md §3`). No questions from the learner. Next (desktop): D1-1 part 2 build/run/logs → part 3 save/load vs export/import, tag/push, OCI → `ckad-D1-2-workloads.md` | _owed_ |
 
 **Owed:** hours + confidence for 14–23 Sep and 27 Sep; the 18–23 Sep drill times for
 `cka-D1.md §7`; the 28 Sep – 5 Oct record (what, if anything, was done).
