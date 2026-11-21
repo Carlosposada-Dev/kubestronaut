@@ -381,6 +381,7 @@ domain: `CKA D1 — Cluster Architecture` · `CKA D3 — Services & Networking` 
 |---|---|---|---|---|---|
 | **`lab-v137`** | 1.37.2 | ✅ | ✅ 3 nodes | crictl + yq 3 nodes · etcdctl/etcdutl **3.7.0** + helm 3.22.1 on cp1 | **Default — everything except upgrade** |
 | **`lab-v136`** | 1.36.6 | ✅ | ✅ 3 nodes | crictl + yq 3 nodes · etcdctl/etcdutl **3.6.8** + helm 3.22.1 on cp1 | **Upgrade runs only** (→ 1.37.x) |
+| **`ckad-v137`** | 1.37.2 (child of `lab-v137`) | ✅ | ✅ 3 nodes | `lab-v137` + **podman 4.9.3** on cp1 · **ingress-nginx** chart 4.15.1 (IngressClass `nginx`, NodePort **30080**) · **metrics-server** chart 3.14.0 in `kube-system` (`--kubelet-insecure-tls`) | **CKAD — everything.** Desktop only so far (21 Nov); laptop: `SNAPSHOT=yes lab/build/ckad-addons.sh` |
 | `w3.cleanw3` | — | — | — | — | 1.2 (bare node) |
 | `w3.prep137` | 1.37.2 held, not joined | — | ✅ | crictl + `crictl.yaml` + yq | 1.3 join · CNI sim B · 1.7 |
 
@@ -388,7 +389,13 @@ domain: `CKA D1 — Cluster Architecture` · `CKA D3 — Services & Networking` 
 source, v137 = everything else** (the exam's minor). `lab-v137` was built by
 upgrading `lab-v136` with `kubeadm upgrade` (it is its child snapshot). The drill
 line (`$do` + `.vimrc`) is **not** in either — it is typed per host, as in the exam
-(§13). Holds on kubeadm/kubelet/kubectl present in both. Build scripts: **`lab/build/`**
+(§13). Holds on kubeadm/kubelet/kubectl present in both. **`ckad-v137`** (21 Nov) is
+`lab-v137` plus the CKAD add-ons, kept apart so CKA work stays on a cluster without
+them: **never run the CKA Helm drill H1 there** — it installs metrics-server again
+(release `metrics`), and two releases fight over the `v1beta1.metrics.k8s.io`
+APIService. ingress-nginx is being retired upstream (SIG Network announcement, Nov
+2025); chart 4.15.1 still installed on 21 Nov and serves the `Ingress` objects the exam
+asks about. If the chart stops resolving, swap the controller, not the exercises. Build scripts: **`lab/build/`**
 in this repo (31 Oct; README there). Versions are resolved at build time = the
 newest patch of each minor that an unpinned `apt-get install` gives that day — so
 a later 1.2 run on `cleanw3` installs a newer patch than the cluster: **pin to the
@@ -513,8 +520,8 @@ skipped.
 | Sat 28 | `ckad-D5-1-services-ingress.md` | notes_05 §1.5, §1.7, §1.10 |
 | Sun 29 | `ckad-D5-2-networkpolicy.md` | notes_05 §1.12 |
 
-Optional, any of those days: start the lab and run `lab/build/ckad-addons.sh` (never
-run yet), so Mon 30 Nov starts on a working lab.
+~~Optional, any of those days: run `lab/build/ckad-addons.sh`.~~ **Done 21 Nov on the
+desktop** → snapshot `ckad-v137` (§8.1). Still owed on the laptop, if CKAD labs run there.
 
 ### 10.2 Full weeks — Mon 30 Nov → Fri 11 Dec (8–10 h a week)
 
@@ -526,7 +533,7 @@ before the first command; one proof per requirement.
 
 | Day | File (one file = one session) | Reported tasks |
 |---|---|---|
-| Mon 30 Nov | lab add-ons + snapshot · `ckad-D2-1-strategies.md` (2.2 R1 blind, 2.1) | R6, R16 |
+| Mon 30 Nov | restore `ckad-v137` (add-ons done 21 Nov, desktop) · `ckad-D2-1-strategies.md` (2.2 R1 blind, 2.1) | R6, R16 |
 | Tue 1 Dec | `ckad-D2-2-packaging.md` (H1 cold ×2) · `ckad-D1-2-workloads.md` | R3, R5 |
 | Wed 2 | `ckad-D4-1-config.md` | R4, R13 |
 | Thu 3 | `ckad-D4-2-identity.md` | R7, R10, R11 |
@@ -743,6 +750,7 @@ copy wins on conflict.**
 | **11-13** | plan | — | **CKA attempt lost: no-show on Sat 7 Nov.** The 3 Nov reschedule to 18 Nov was never saved in the portal. CKS blocked with it. Ticket TCCS-187948 (reinstatement + 90-day extension). **Plan v6.0: CKAD Sat 21 Nov, retake Fri 27 Nov** (§3, §10). `ckad/` created: curriculum with the reported-task list R1–R16 + `ckad-D1…D5` r1 skeletons (draft paths unmeasured); `lab/build/ckad-addons.sh` written, **not run** (lab was down). CKA frozen at D1 7/8, D2 2.1 guided. Next (Sat 14): book the exam · add-ons + snapshot · D2 · D1 1.2 | — |
 | **11-14** | plan | — | **Ticket TCCS-187948 granted:** CKA eligibility reset (one-time) and CKA + CKAD + CKS extended to **28 Feb 2027**; KCSA valid to 6 Mar 2027 → Kubestronaut reachable again. **Plan v7.0:** CKAD Sat 12 Dec · CKA Sat 16 Jan · CKS Sat 13 Feb · KCSA Sat 20 Feb (§3). Pace rule: 8–10 h a week, one day off, no day over 3 h (§1). `ckad/` split into indexes + 11 content files (one file = one sub-session). Rest: 14–16 Nov nothing; 17–29 Nov 1 h of reading a day (§10.1); full pace from Mon 30 Nov (§10.2). Owed: book the four exams (e-mail + portal) · run `ckad-addons.sh` | — |
 | **11-18** | CKAD | _owed_ (laptop, no lab) | **CKAD D1-1 1.1, reading-week walkthrough (stage 1), stopped at part 1 of 3**: file map (r1 skeleton, draft paths unmeasured, podman not on kubernetes.io → `--help` only) and Dockerfile instructions (`FROM` `RUN` `COPY` `ENV` `USER`, build time vs run time, `ENTRYPOINT`→`command` / `CMD`→`args`, `RUN rm` does not remove a secret). **Reading order changed to domain order D1 → D5** (§10.1 re-cut; §10.2 unchanged). Language-by-stage rule adopted the same day (`session-protocol.md §3`). No questions from the learner. Next (desktop): D1-1 part 2 build/run/logs → part 3 save/load vs export/import, tag/push, OCI → `ckad-D1-2-workloads.md` | _owed_ |
+| **11-21** | lab | — | **CKAD add-ons on the desktop lab, snapshot `ckad-v137`** (child of `lab-v137`, cp1 w1 w2): `lab/build/ckad-addons.sh` run for the first time — podman 4.9.3 on cp1 · ingress-nginx chart 4.15.1 (NodePort 30080, acceptance 200 ✅) · **metrics-server added to the script** (chart 3.14.0, `kube-system`, `kubectl top nodes` ✅) · `SNAPSHOT=yes` takes the snapshot and restarts the nodes. Fixed on the way: the test namespace was caught `Terminating` in the first snapshot (now `--wait=true`, snapshot retaken) · with an inherited stdin the restart stopped silently with exit 0 (now `exec < /dev/null`). After restore ~90 s for pods, ~60 s more for the Metrics API. Laptop still on `lab-v137` only. Organizer session for CKAD + one sub-session per content file started on the desktop | — |
 
 **Owed:** hours + confidence for 14–23 Sep and 27 Sep; the 18–23 Sep drill times for
 `cka-D1.md §7`; the 28 Sep – 5 Oct record (what, if anything, was done).

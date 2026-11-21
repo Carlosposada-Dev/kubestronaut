@@ -16,7 +16,7 @@ machine running multipass), as the normal user. Every script resolves versions a
 | `wipe-node.sh` | Return a node to plain Ubuntu without recreating the VM (`MODE=inplace`) |
 | `resolve-versions.sh` | Print the versions a build would use today |
 | `common.sh` | Shared helpers, sourced by the others |
-| `ckad-addons.sh` | CKAD extras on a running `lab-v<n>`: podman on cp1, ingress-nginx by Helm on NodePort 30080, with an acceptance check. Re-run after a restore, or snapshot after it passes. **Not yet run (13 Nov)** |
+| `ckad-addons.sh` | CKAD extras on a running `lab-v<n>`: podman on cp1, ingress-nginx by Helm on NodePort 30080 (acceptance: Ingress answers 200), metrics-server by Helm in `kube-system` (acceptance: `kubectl top nodes`). `SNAPSHOT=yes` then snapshots `ckad-v<n>` on cp1 w1 w2 and restarts them. First run 21 Nov (desktop) |
 
 ```bash
 ./build-lab.sh                       # dry run: prints the resolved versions only
